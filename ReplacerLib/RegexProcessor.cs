@@ -3,6 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace Dem0n13.Replacer.Lib
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class RegexProcessor
     {
         private readonly Regex _regex;

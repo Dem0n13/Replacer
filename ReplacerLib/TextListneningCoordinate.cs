@@ -18,7 +18,7 @@ namespace Dem0n13.Replacer.Lib
         private void CorrectIndex(object sender, LengthChangedEventArgs e)
         {
             Debug.WriteLineIf(e.StartChangingIndex <= Index, e.Delta);
-            if (e.StartChangingIndex <= Index) 
+            if (e.StartChangingIndex <= Index) // TODO проверить ==
                 Index += e.Delta;
             if (e.CurrentLength <= Index)
                 Valid = false;

@@ -7,7 +7,7 @@ namespace Dem0n13.Replacer.Lib
 {
     public class Replacement
     {
-        public bool Immutable;
+        public bool Immutable { get; private set; }
         private readonly List<object> _parsedString;
         private string _lastBuilt;
         private static readonly Regex Numbers = new Regex("\\d+", RegexOptions.Compiled);

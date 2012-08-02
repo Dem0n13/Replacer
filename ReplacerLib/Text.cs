@@ -16,6 +16,11 @@ namespace Dem0n13.Replacer.Lib
             _builder = new StringBuilder(PlainText);
         }
 
+        /// <summary>
+        /// Изменить текст заменой совпадения на собранную строку замены
+        /// </summary>
+        /// <param name="match">Совпадение</param>
+        /// <param name="replacement">Собранная строка замены</param>
         public void Replace(TextMatch match, string replacement)
         {
             if (!match.Success) return;
@@ -36,8 +41,12 @@ namespace Dem0n13.Replacer.Lib
 
             PlainText = _builder.ToString();
 
-            var e = new LengthChangedEventArgs(oldLength, PlainText.Length, match.Coordinate.Index + match.Length);
-            OnLengthChanged(e);
+            // оповещаем об изменении длины
+            if (oldLength != PlainText.Length)
+            {
+                var e = new LengthChangedEventArgs(oldLength, PlainText.Length, match.Coordinate.Index + match.Length);
+                OnLengthChanged(e);
+            }
         }
 
         private void OnLengthChanged(LengthChangedEventArgs e)

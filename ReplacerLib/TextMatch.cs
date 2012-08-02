@@ -4,16 +4,33 @@ namespace Dem0n13.Replacer.Lib
 {
     public class TextMatch
     {
+        /// <summary>
+        /// Самообновляемые координаты совпадения
+        /// </summary>
         public TextListneningCoordinate Coordinate { get; private set; }
+
+        /// <summary>
+        /// Длина совпадения
+        /// </summary>
         public int Length { get; private set; }
+
+        /// <summary>
+        /// Успешность совпадения
+        /// </summary>
         public bool Success { get; private set; }
 
-        public string MatchString
-        {
-            get { return Groups[0].Value; }
-        }
-
+        /// <summary>
+        /// Группы в совпадении
+        /// </summary>
         public GroupCollection Groups { get; private set; }
+
+        /// <summary>
+        /// Возвращает всю строку-совпадение
+        /// </summary>
+        public string FullMatchString
+        {
+            get { return Groups[0].Value; } // Groups всегда содержит как минимум 1 элемент
+        }
 
         public TextMatch(Match match, Text text)
         {
@@ -29,7 +46,7 @@ namespace Dem0n13.Replacer.Lib
                 if (Groups.Count > 1)
                     return string.Format("Success: {0} groups", Groups.Count);
                 else
-                    return "Success: " + MatchString;
+                    return "Success: " + FullMatchString;
             return "Fail";
         }
     }
