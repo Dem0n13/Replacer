@@ -78,9 +78,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ReplacerLib\ReplacerLib.csproj">
-      <Project>{C8DA6E58-D866-47A7-8749-0AB773218D42}</Project>
-      <Name>ReplacerLib</Name>
+    <ProjectReference Include="..\ReplacerLazyLib\ReplacerLibrary.csproj">
+      <Project>{24D3F5C0-37E9-44CF-BBA8-F13BA147F8DA}</Project>
+      <Name>ReplacerLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

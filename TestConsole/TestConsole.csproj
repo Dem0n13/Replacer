@@ -46,13 +46,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ReplacerLazyLib\ReplacerLazyLib.csproj">
+    <ProjectReference Include="..\ReplacerLazyLib\ReplacerLibrary.csproj">
       <Project>{24d3f5c0-37e9-44cf-bba8-f13ba147f8da}</Project>
-      <Name>ReplacerLazyLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ReplacerLib\ReplacerLib.csproj">
-      <Project>{c8da6e58-d866-47a7-8749-0ab773218d42}</Project>
-      <Name>ReplacerLib</Name>
+      <Name>ReplacerLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

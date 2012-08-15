@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
-using Dem0n13.Replacer.Lib;
+using Dem0n13.Replacer.Library;
+using Dem0n13.Replacer.Library.Utils;
 
 namespace Dem0n13.Replacer.App
 {
@@ -10,9 +11,9 @@ namespace Dem0n13.Replacer.App
     {
         private TextFile _inputFile;
 
-        private Text _inputText;
+        private TextReplacer _replacer;
         private RegexProcessor _regex;
-        private List<TextMatch> _matches;
+        private List<RelatedMatch> _matches;
         private Replacement _replacement;
 
         public MainForm()
@@ -32,17 +33,23 @@ namespace Dem0n13.Replacer.App
 
         private void PreviewBtnClick(object sender, EventArgs e)
         {
-            _inputText = new Text(_inputFile.ReadText());
-            LogBox.AppendText("Файл загружен" + Environment.NewLine);
+            var sw = new Stopwatch();
 
+            sw.Restart();
+            _replacer = new TextReplacer(_inputFile.ReadText());
+            LogBox.AppendText("Файл загружен" + Environment.NewLine);
+            LogBox.AppendText(sw.ElapsedTicks + Environment.NewLine);
+
+            sw.Restart();
             _regex = new RegexProcessor(RegExpBox.Text);
             LogBox.AppendText("Регулярное выражение собрано" + Environment.NewLine);
 
             _replacement = new Replacement(ReplaceBox.Text);
-            if (_replacement.Immutable)
-                LogBox.AppendText("Строка замены собрана" + Environment.NewLine);
+            LogBox.AppendText(sw.ElapsedTicks + Environment.NewLine);
 
-            _matches = _regex.Matches(_inputText);
+            sw.Restart();
+            _matches = _regex.Matches(_replacer);
+            LogBox.AppendText(sw.ElapsedTicks + Environment.NewLine);
             if (_matches[0].Success)
             {
                 LogBox.AppendText(_matches.Count + " совпадений" + Environment.NewLine);
@@ -57,12 +64,22 @@ namespace Dem0n13.Replacer.App
 
         private void LaunchBtnClick(object sender, EventArgs e)
         {
+            var sw = new Stopwatch();
+            var sw1 = new Stopwatch();
+
             foreach (var textMatch in _matches)
             {
-                _inputText.Replace(textMatch, _replacement.Build(textMatch));
+                sw.Start();
+                var replacementStr = _replacement.CreateCopyWithGroups(textMatch);
+                sw.Stop();
+                sw1.Start();
+                _replacer.Replace(textMatch, replacementStr);
+                sw1.Stop();
             }
 
-            _inputFile.WriteText(_inputText.PlainText);
+            LogBox.AppendText(sw.ElapsedTicks.ToString() + Environment.NewLine);
+            LogBox.AppendText(sw1.ElapsedTicks.ToString() + Environment.NewLine);
+            _inputFile.WriteText(_replacer.BuildResult());
         }
     }
 }

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
-namespace Dem0n13.Replacer.Lib
+namespace Dem0n13.Replacer.Library.Utils
 {
     /// <summary>
     /// Класс-генератор коллекций строк, разделенных по переносу
@@ -19,8 +18,6 @@ namespace Dem0n13.Replacer.Lib
         /// <returns>Коллекция строк</returns>
         public static T Create(ref string input, string newLine)
         {
-            Debug.Assert(input != null);
-
             var result = new T();
 
             var startIndex = 0;

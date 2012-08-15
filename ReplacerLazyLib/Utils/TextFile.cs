@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Dem0n13.Replacer.Lib
+namespace Dem0n13.Replacer.Library.Utils
 {
     public class TextFile
     {
