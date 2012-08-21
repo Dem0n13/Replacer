@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // Управление общими сведениями о сборке осуществляется с помощью 
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
-[assembly: AssemblyTitle("Replacer")]
+[assembly: AssemblyTitle("LocalizationLibrary")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Replacer")]
-[assembly: AssemblyCopyright("Copyright ©  2012 Dmitry Statsenko")]
+[assembly: AssemblyProduct("LocalizationLibrary")]
+[assembly: AssemblyCopyright("Copyright ©  2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Следующий GUID служит для идентификации библиотеки типов, если этот проект будет видимым для COM
-[assembly: Guid("def200c3-e4b8-4887-bdaa-8ce40443e8a9")]
+[assembly: Guid("14a0c0c5-2c64-4f17-b28f-0e0ceef42610")]
 
 // Сведения о версии сборки состоят из следующих четырех значений:
 //

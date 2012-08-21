@@ -85,7 +85,7 @@ namespace Dem0n13.Replacer.Library.Utils
             File.WriteAllText(FullPath, text);
         }
 
-        public new string ToString()
+        public override string ToString()
         {
             return FullPath;
         }

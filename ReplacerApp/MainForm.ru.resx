@@ -117,4 +117,21 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="FilesChooserBtn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>128, 27</value>
+  </data>
+  <data name="FilesChooserBtn.Text" xml:space="preserve">
+    <value>Выберите файлы...</value>
+  </data>
+  <data name="OpenFilelistBtn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>289, 27</value>
+  </data>
+  <data name="OpenFilelistBtn.Text" xml:space="preserve">
+    <value>Открыть сохраненный список файлов (.rlist)...</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+    <value>CenterScreen</value>
+  </data>
 </root>

@@ -28,7 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.OpenFilesBtn = new System.Windows.Forms.Button();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            this.FilesChooserBtn = new System.Windows.Forms.Button();
             this.RegExpBox = new System.Windows.Forms.TextBox();
             this.FilePathBox = new System.Windows.Forms.TextBox();
             this.ReplaceBox = new System.Windows.Forms.TextBox();
@@ -38,112 +39,153 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.LaunchBtn = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.RegexStageBtn = new System.Windows.Forms.Button();
+            this.FilesSelectionStageLayout = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.ClearFileListBtn = new System.Windows.Forms.Button();
+            this.SaveFileListBtn = new System.Windows.Forms.Button();
+            this.FileListBox = new System.Windows.Forms.TextBox();
+            this.OpenFileListBtn = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.FilesSelectionStageLayout.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // OpenFilesBtn
+            // FilesChooserBtn
             // 
-            this.OpenFilesBtn.Location = new System.Drawing.Point(470, 10);
-            this.OpenFilesBtn.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.OpenFilesBtn.Name = "OpenFilesBtn";
-            this.OpenFilesBtn.Size = new System.Drawing.Size(87, 30);
-            this.OpenFilesBtn.TabIndex = 0;
-            this.OpenFilesBtn.Text = "OpenFilesBtn";
-            this.OpenFilesBtn.UseVisualStyleBackColor = true;
-            this.OpenFilesBtn.Click += new System.EventHandler(this.OpenFilesBtnClick);
+            resources.ApplyResources(this.FilesChooserBtn, "FilesChooserBtn");
+            this.FilesChooserBtn.Name = "FilesChooserBtn";
+            this.FilesChooserBtn.UseVisualStyleBackColor = true;
+            this.FilesChooserBtn.Click += new System.EventHandler(this.OpenFilesBtnClick);
             // 
             // RegExpBox
             // 
-            this.RegExpBox.Font = new System.Drawing.Font("Consolas", 12F);
-            this.RegExpBox.Location = new System.Drawing.Point(10, 70);
-            this.RegExpBox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.RegExpBox.Multiline = true;
+            resources.ApplyResources(this.RegExpBox, "RegExpBox");
             this.RegExpBox.Name = "RegExpBox";
-            this.RegExpBox.Size = new System.Drawing.Size(230, 280);
-            this.RegExpBox.TabIndex = 1;
             // 
             // FilePathBox
             // 
-            this.FilePathBox.Location = new System.Drawing.Point(10, 10);
-            this.FilePathBox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            resources.ApplyResources(this.FilePathBox, "FilePathBox");
             this.FilePathBox.Name = "FilePathBox";
-            this.FilePathBox.Size = new System.Drawing.Size(450, 25);
-            this.FilePathBox.TabIndex = 2;
             // 
             // ReplaceBox
             // 
-            this.ReplaceBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ReplaceBox.Location = new System.Drawing.Point(250, 70);
-            this.ReplaceBox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.ReplaceBox.Multiline = true;
+            resources.ApplyResources(this.ReplaceBox, "ReplaceBox");
             this.ReplaceBox.Name = "ReplaceBox";
-            this.ReplaceBox.Size = new System.Drawing.Size(230, 280);
-            this.ReplaceBox.TabIndex = 3;
             // 
             // checkBox1
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Enabled = false;
-            this.checkBox1.Location = new System.Drawing.Point(570, 20);
+            resources.ApplyResources(this.checkBox1, "checkBox1");
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(138, 21);
-            this.checkBox1.TabIndex = 4;
-            this.checkBox1.Text = "Блокировать файл";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // LogBox
             // 
-            this.LogBox.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.LogBox.Location = new System.Drawing.Point(490, 150);
-            this.LogBox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.LogBox.Multiline = true;
+            resources.ApplyResources(this.LogBox, "LogBox");
             this.LogBox.Name = "LogBox";
-            this.LogBox.Size = new System.Drawing.Size(230, 200);
-            this.LogBox.TabIndex = 5;
             // 
             // PreviewBtn
             // 
-            this.PreviewBtn.Location = new System.Drawing.Point(490, 70);
+            resources.ApplyResources(this.PreviewBtn, "PreviewBtn");
             this.PreviewBtn.Name = "PreviewBtn";
-            this.PreviewBtn.Size = new System.Drawing.Size(230, 30);
-            this.PreviewBtn.TabIndex = 6;
-            this.PreviewBtn.Text = "Поиск совпадений";
             this.PreviewBtn.UseVisualStyleBackColor = true;
             this.PreviewBtn.Click += new System.EventHandler(this.PreviewBtnClick);
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 40);
+            resources.ApplyResources(this.label1, "label1");
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(219, 17);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "Регулярное выражение для поиска";
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(250, 40);
+            resources.ApplyResources(this.label2, "label2");
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(125, 17);
-            this.label2.TabIndex = 8;
-            this.label2.Text = "Выражение замены";
             // 
             // LaunchBtn
             // 
-            this.LaunchBtn.Enabled = false;
-            this.LaunchBtn.Location = new System.Drawing.Point(490, 110);
+            resources.ApplyResources(this.LaunchBtn, "LaunchBtn");
             this.LaunchBtn.Name = "LaunchBtn";
-            this.LaunchBtn.Size = new System.Drawing.Size(230, 30);
-            this.LaunchBtn.TabIndex = 9;
-            this.LaunchBtn.Text = "Замена совпадений";
             this.LaunchBtn.UseVisualStyleBackColor = true;
             this.LaunchBtn.Click += new System.EventHandler(this.LaunchBtnClick);
             // 
+            // label3
+            // 
+            resources.ApplyResources(this.label3, "label3");
+            this.label3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))));
+            this.label3.Name = "label3";
+            // 
+            // RegexStageBtn
+            // 
+            resources.ApplyResources(this.RegexStageBtn, "RegexStageBtn");
+            this.RegexStageBtn.Name = "RegexStageBtn";
+            this.RegexStageBtn.UseVisualStyleBackColor = true;
+            this.RegexStageBtn.Click += new System.EventHandler(this.RegexStageBtnClick);
+            // 
+            // FilesSelectionStageLayout
+            // 
+            this.FilesSelectionStageLayout.Controls.Add(this.tableLayoutPanel1);
+            resources.ApplyResources(this.FilesSelectionStageLayout, "FilesSelectionStageLayout");
+            this.FilesSelectionStageLayout.Name = "FilesSelectionStageLayout";
+            // 
+            // tableLayoutPanel1
+            // 
+            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.RegexStageBtn, 0, 7);
+            this.tableLayoutPanel1.Controls.Add(this.FileListBox, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this.FilesChooserBtn, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.OpenFileListBtn, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.label4, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.label3, 0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            // 
+            // flowLayoutPanel1
+            // 
+            resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
+            this.flowLayoutPanel1.Controls.Add(this.ClearFileListBtn);
+            this.flowLayoutPanel1.Controls.Add(this.SaveFileListBtn);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            // 
+            // ClearFileListBtn
+            // 
+            resources.ApplyResources(this.ClearFileListBtn, "ClearFileListBtn");
+            this.ClearFileListBtn.Name = "ClearFileListBtn";
+            this.ClearFileListBtn.UseVisualStyleBackColor = true;
+            this.ClearFileListBtn.Click += new System.EventHandler(this.ClearFilelistBtnClick);
+            // 
+            // SaveFileListBtn
+            // 
+            resources.ApplyResources(this.SaveFileListBtn, "SaveFileListBtn");
+            this.SaveFileListBtn.Name = "SaveFileListBtn";
+            this.SaveFileListBtn.UseVisualStyleBackColor = true;
+            this.SaveFileListBtn.Click += new System.EventHandler(this.SaveFilelistBtnClick);
+            // 
+            // FileListBox
+            // 
+            resources.ApplyResources(this.FileListBox, "FileListBox");
+            this.FileListBox.Name = "FileListBox";
+            this.FileListBox.ReadOnly = true;
+            // 
+            // OpenFileListBtn
+            // 
+            resources.ApplyResources(this.OpenFileListBtn, "OpenFileListBtn");
+            this.OpenFileListBtn.Name = "OpenFileListBtn";
+            this.OpenFileListBtn.UseVisualStyleBackColor = true;
+            this.OpenFileListBtn.Click += new System.EventHandler(this.OpenFilelistBtnClick);
+            // 
+            // label4
+            // 
+            resources.ApplyResources(this.label4, "label4");
+            this.label4.Name = "label4";
+            // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(730, 361);
+            this.Controls.Add(this.FilesSelectionStageLayout);
             this.Controls.Add(this.LaunchBtn);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -153,11 +195,12 @@
             this.Controls.Add(this.ReplaceBox);
             this.Controls.Add(this.FilePathBox);
             this.Controls.Add(this.RegExpBox);
-            this.Controls.Add(this.OpenFilesBtn);
-            this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "MainForm";
-            this.Text = "Replacer";
+            this.FilesSelectionStageLayout.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -165,7 +208,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Button OpenFilesBtn;
+        private System.Windows.Forms.Button FilesChooserBtn;
         private System.Windows.Forms.TextBox RegExpBox;
         private System.Windows.Forms.TextBox FilePathBox;
         private System.Windows.Forms.TextBox ReplaceBox;
@@ -175,6 +218,16 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button LaunchBtn;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button RegexStageBtn;
+        private System.Windows.Forms.Panel FilesSelectionStageLayout;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.Button ClearFileListBtn;
+        private System.Windows.Forms.Button SaveFileListBtn;
+        private System.Windows.Forms.Button OpenFileListBtn;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox FileListBox;
     }
 }
 
