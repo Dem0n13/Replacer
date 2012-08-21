@@ -7,7 +7,7 @@
     <ProjectGuid>{C37D42CD-B448-4A58-A0AB-E439A67910E4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LocalizationLibrary</RootNamespace>
+    <RootNamespace>Dem0n13.LocalizationLibrary</RootNamespace>
     <AssemblyName>LocalizationLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -33,17 +33,10 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Hyper\ChainingPropertyDescriptor.cs" />
     <Compile Include="Hyper\PropertyDescriptorBuilder.cs" />
-    <Compile Include="Hyper\HyperTypeDescriptionProvider.cs" />
-    <Compile Include="Hyper\HyperTypeDescriptor.cs" />
     <Compile Include="LocalizationManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

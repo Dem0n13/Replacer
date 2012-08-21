@@ -1,19 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Configuration;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Threading;
 using LocalizationLibrary.Hyper;
 
-namespace LocalizationLibrary
+namespace Dem0n13.LocalizationLibrary
 {
     public class LocalizationManager
     {
@@ -91,7 +85,19 @@ namespace LocalizationLibrary
             }
         }
 
-        private Dictionary<string, string> ParseLangStream(Stream stream)
+        private static bool TryParseLine(string line, out KeyValuePair<string, string> parsed)
+        {
+            var split = line.Split(new[] {'=', '"'}, StringSplitOptions.RemoveEmptyEntries);
+            if (split.Length == 2)
+            {
+                parsed = new KeyValuePair<string, string>(split[0], split[1].Replace("\\n", Environment.NewLine));
+                return true;
+            }
+            parsed = new KeyValuePair<string, string>();
+            return false;
+        }
+
+        private static Dictionary<string, string> ParseLangStream(Stream stream)
         {
             var result = new Dictionary<string, string>();
 
@@ -100,28 +106,27 @@ namespace LocalizationLibrary
                 string line;
                 while ((line = streamReader.ReadLine()) != null)
                 {
-                    var keyValuePair = line.Split(new[] {'=', '"'}, StringSplitOptions.RemoveEmptyEntries);
-                    if (keyValuePair.Length == 2 && !result.ContainsKey(keyValuePair[0]))
-                        result.Add(keyValuePair[0], keyValuePair[1]);
+                    KeyValuePair<string, string> resultNode;
+                    if (TryParseLine(line, out resultNode) && !result.ContainsKey(resultNode.Key))
+                        result.Add(resultNode.Key, resultNode.Value);
                 }
             }
 
             return result;
         }
 
-        private Dictionary<string, string> ParseLangFile(string filePath)
+        private static Dictionary<string, string> ParseLangFile(string filePath)
         {
             var result = new Dictionary<string, string>();
 
             if (File.Exists(filePath))
             {
                 var lines = File.ReadAllLines(filePath);
-
                 foreach (var line in lines)
                 {
-                    var keyValuePair = line.Split(new[] {'=', '"'}, StringSplitOptions.RemoveEmptyEntries);
-                    if (keyValuePair.Length == 2 && !result.ContainsKey(keyValuePair[0]))
-                        result.Add(keyValuePair[0], keyValuePair[1]);
+                    KeyValuePair<string, string> resultNode;
+                    if (TryParseLine(line, out resultNode) && !result.ContainsKey(resultNode.Key))
+                        result.Add(resultNode.Key, resultNode.Value);
                 }
             }
 

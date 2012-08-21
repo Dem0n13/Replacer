@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Dem0n13.Replacer.Library</RootNamespace>
-    <AssemblyName>ReplacerLazyLib</AssemblyName>
+    <AssemblyName>Dem0n13.Replacer.Library</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

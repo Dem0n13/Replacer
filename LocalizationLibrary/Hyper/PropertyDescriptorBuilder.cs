@@ -43,7 +43,7 @@ namespace LocalizationLibrary.Hyper
             try
             {
                 PropertyInfo property = descriptor.ComponentType.GetProperty(descriptor.Name);
-                if (property == null) return false;
+                if (property == null || property.DeclaringType == null) return false;
                 lock (CachedProperties)
                 {
                     PropertyDescriptor foundBuiltAlready;
@@ -86,7 +86,7 @@ namespace LocalizationLibrary.Hyper
                                              MethodAttributes.HideBySig | MethodAttributes.Public |
                                              MethodAttributes.Virtual | MethodAttributes.Final,
                                              baseMethod.CallingConvention, baseMethod.ReturnType,
-                                             new Type[] {typeof (object)});
+                                             new[] {typeof (object)});
                         // start writing IL into the method
                         il = mb.GetILGenerator();
                         if (property.DeclaringType.IsValueType)
@@ -127,14 +127,7 @@ namespace LocalizationLibrary.Hyper
                                          MethodAttributes.Final | MethodAttributes.SpecialName,
                                          baseMethod.CallingConvention, baseMethod.ReturnType, Type.EmptyTypes);
                     il = mb.GetILGenerator();
-                    if (supportsChangeEvents)
-                    {
-                        il.Emit(OpCodes.Ldc_I4_1);
-                    }
-                    else
-                    {
-                        il.Emit(OpCodes.Ldc_I4_0);
-                    }
+                    il.Emit(supportsChangeEvents ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0);
                     il.Emit(OpCodes.Ret);
                     tb.DefineMethodOverride(mb, baseMethod);
 
@@ -210,16 +203,12 @@ namespace LocalizationLibrary.Hyper
                                 tb.DefineMethodOverride(mb, baseMethod);
                             }
                         }
-
                     }
 
                     PropertyDescriptor newDesc =
                         tb.CreateType().GetConstructor(new[] {typeof (PropertyDescriptor)})
                             .Invoke(new object[] {descriptor}) as PropertyDescriptor;
-                    if (newDesc == null)
-                    {
-                        return false;
-                    }
+                    if (newDesc == null) return false;
 
                     descriptor = newDesc;
                     CachedProperties.Add(property, descriptor);

@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Security.Permissions;
 using System.Threading;
 using System.Windows.Forms;
+using Dem0n13.LocalizationLibrary;
 using Dem0n13.Replacer.App.Properties;
 using Dem0n13.Replacer.Library;
 using Dem0n13.Replacer.Library.Utils;
@@ -18,7 +19,7 @@ namespace Dem0n13.Replacer.App
 {
     public partial class MainForm : Form
     {
-        private readonly LocalizationManager _localizationManager;
+        private LocalizationManager _localizationManager;
 
         private TextReplacer _replacer;
         private RegexProcessor _regex;
@@ -27,11 +28,25 @@ namespace Dem0n13.Replacer.App
 
         public MainForm()
         {
-            // считывание настроек, в т.ч. языка
+            
             InitializeComponent();
+            InitializeLocalization();
+            var asmName = Assembly.GetExecutingAssembly().GetName();
+            Text = string.Format("{0} v.{1}", asmName.Name, asmName.Version);
+            SwitchStage(ReplacerStages.FilesSelection);
+        }
+
+        private void InitializeLocalization()
+        {
             _localizationManager = new LocalizationManager("Language");
-            _localizationManager.ApplyResource(FilesChooserBtn, "Text", "SelectFiles");
+            _localizationManager.ApplyResource(FileSelectionCaption, "Text", "FileSelectionCaption");
+            _localizationManager.ApplyResource(ChooseFilesBtn, "Text", "SelectFiles");
+            _localizationManager.ApplyResource(OpenFileListBtn, "Text", "OpenFileList");
+            _localizationManager.ApplyResource(FileListCaption, "Text", "FileListCaption");
             _localizationManager.ApplyResource(FileListBox, "Text", "EmptyFileList");
+            _localizationManager.ApplyResource(ClearFileListBtn, "Text", "ClearFileList");
+            _localizationManager.ApplyResource(SaveFileListBtn, "Text", "SaveFileList");
+            _localizationManager.ApplyResource(RegexStageBtn, "Text", "Next");
         }
 
         #region Navigation
@@ -45,7 +60,8 @@ namespace Dem0n13.Replacer.App
                     visibleLayout = FilesSelectionStageLayout;
                     break;
                 case ReplacerStages.RegexInput:
-                    //break;
+                    visibleLayout = RegexStageLayout;
+                    break;
                 case ReplacerStages.Preview:
                     //break;
                 case ReplacerStages.Replacing:
@@ -83,7 +99,7 @@ namespace Dem0n13.Replacer.App
                         _localizationManager.CleanResource(FileListBox, "Text");
                         FileListBox.Clear();
 
-                        _localizationManager.ApplyResource(FilesChooserBtn, "Text", "AddFiles");
+                        _localizationManager.ApplyResource(ChooseFilesBtn, "Text", "AddFiles");
                     }
 
                     foreach (var fileName in fileDialog.FileNames)
@@ -105,7 +121,7 @@ namespace Dem0n13.Replacer.App
         {
             _inputFiles.Clear();
             
-            _localizationManager.ApplyResource(FilesChooserBtn, "Text", "SelectFiles");
+            _localizationManager.ApplyResource(ChooseFilesBtn, "Text", "SelectFiles");
             _localizationManager.ApplyResource(FileListBox, "Text", "EmptyFileList");
         }
 
@@ -130,7 +146,16 @@ namespace Dem0n13.Replacer.App
 
         #region RegexInput
 
+        private void FileSelectionStageBtnClick(object sender, EventArgs e)
+        {
+            SwitchStage(ReplacerStages.FilesSelection);
+        }
 
+        private void PreviewStageBtnClick(object sender, EventArgs e)
+        {
+            //
+            SwitchStage(ReplacerStages.Preview);
+        }
 
         #endregion
 
@@ -147,7 +172,7 @@ namespace Dem0n13.Replacer.App
             _regex = new RegexProcessor(RegExpBox.Text);
             LogBox.AppendText("Регулярное выражение собрано" + Environment.NewLine);
 
-            _replacement = new Replacement(ReplaceBox.Text);
+            _replacement = new Replacement(ReplacementBox.Text);
             LogBox.AppendText(sw.ElapsedTicks + Environment.NewLine);
 
             sw.Restart();
@@ -184,5 +209,7 @@ namespace Dem0n13.Replacer.App
             LogBox.AppendText(sw1.ElapsedTicks.ToString() + Environment.NewLine);
             _inputFiles[0].WriteText(_replacer.BuildResult()); //TOOD
         }
+
+
     }
 }
