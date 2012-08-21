@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Task.cs" />
     <Compile Include="Utils\Boxed.cs" />
     <Compile Include="Utils\AbstractTextLengthChanger.cs" />
     <Compile Include="Utils\Node.cs" />

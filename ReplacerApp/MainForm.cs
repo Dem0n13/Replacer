@@ -28,7 +28,6 @@ namespace Dem0n13.Replacer.App
 
         public MainForm()
         {
-            
             InitializeComponent();
             InitializeLocalization();
             var asmName = Assembly.GetExecutingAssembly().GetName();

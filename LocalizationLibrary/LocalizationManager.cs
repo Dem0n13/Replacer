@@ -56,6 +56,8 @@ namespace Dem0n13.LocalizationLibrary
             LoadLangPack();
         }
 
+        #region private loading, parsing
+
         private void LoadLangPack()
         {
             var match = Regex.Match(Thread.CurrentThread.CurrentUICulture.Name, "(\\w+)-?(\\w+)?");
@@ -75,15 +77,6 @@ namespace Dem0n13.LocalizationLibrary
             }
         }
 
-        private void Update(object target)
-        {
-            foreach (var targetPropertyNode in _targetsMap[target])
-            {
-                var newValue = GetString(targetPropertyNode.Value);
-                if (newValue != null)
-                    targetPropertyNode.Key.SetValue(target, newValue);
-            }
-        }
 
         private static bool TryParseLine(string line, out KeyValuePair<string, string> parsed)
         {
@@ -133,6 +126,41 @@ namespace Dem0n13.LocalizationLibrary
             return result;
         }
 
+        #endregion
+
+        private void Update(object target)
+        {
+            foreach (var targetPropertyNode in _targetsMap[target])
+            {
+                var newValue = GetString(targetPropertyNode.Value);
+                if (newValue != null)
+                    targetPropertyNode.Key.SetValue(target, newValue);
+            }
+        }
+
+        public void UpdateAll()
+        {
+            if (!CultureValid) LoadLangPack();
+            
+            foreach (var target in _targetsMap.Keys)
+                Update(target);
+        }
+
+        /// <summary>
+        /// Применяет ресурс (переведенную строку) к объекту с заданным свойсвом.
+        /// Ресурс определяется по ключу
+        /// </summary>
+        /// <param name="target">Объект, к которому применяется перевод</param>
+        /// <param name="propertyName">Свойство объекта</param>
+        /// <param name="resourceKey">Ключ, определяющий ресурс</param>
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="resourceKey" /> must not be null.
+        /// </exception>
+        /// <exception cref="Exception">
+        ///     <p>Property <paramref name="propertyName"/> is not found.</p>
+        ///     <p>- or - </p>
+        ///     <p>Property <paramref name="propertyName"/> is not string type.</p>
+        /// </exception>
         public void ApplyResource(object target, string propertyName, string resourceKey)
         {
             if (!CultureValid) LoadLangPack();
@@ -141,7 +169,9 @@ namespace Dem0n13.LocalizationLibrary
             if (property == null)
                 throw new Exception(string.Format("Property '{0}' is not found", propertyName));
             if (property.PropertyType != typeof (string))
-                throw new Exception(string.Format("Property '{0}' has not string type", propertyName));
+                throw new Exception(string.Format("Property '{0}' is not string type", propertyName));
+            if (resourceKey == null)
+                throw new ArgumentNullException("resourceKey");
 
             if (!_targetsMap.ContainsKey(target)) _targetsMap.Add(target, new Dictionary<PropertyDescriptor, string>());
             if (!_targetsMap[target].ContainsKey(property)) _targetsMap[target].Add(property, resourceKey);
@@ -155,8 +185,6 @@ namespace Dem0n13.LocalizationLibrary
             var property = PropertyDescriptorBuilder.TryCreatePropertyDescriptor(target.GetType(), propertyName);
             if (property == null)
                 throw new Exception(string.Format("Property '{0}' is not found", propertyName));
-            if (property.PropertyType != typeof (string))
-                throw new Exception(string.Format("Property '{0}' has not string type", propertyName));
 
             if (_targetsMap.ContainsKey(target) && _targetsMap[target].ContainsKey(property))
                 _targetsMap[target].Remove(property);
@@ -167,8 +195,6 @@ namespace Dem0n13.LocalizationLibrary
             var property = PropertyDescriptorBuilder.TryCreatePropertyDescriptor(target.GetType(), propertyName);
             if (property == null)
                 throw new Exception(string.Format("Property '{0}' is not found", propertyName));
-            if (property.PropertyType != typeof (string))
-                throw new Exception(string.Format("Property '{0}' has not string type", propertyName));
 
             return _targetsMap.ContainsKey(target) && _targetsMap[target].ContainsKey(property);
         }
