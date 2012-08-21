@@ -1,101 +1,60 @@
-using System;
+п»їusing System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Reflection.Emit;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Threading;
-using System.Collections.Generic;
-
-/* Change history:
- * 20 Apr 2007  Marc Gravell    Renamed
- * 21 Aug 2012  Dmitry Statsenko Some fixes
- */
 
 namespace LocalizationLibrary.Hyper
 {
-    internal sealed class HyperTypeDescriptor : CustomTypeDescriptor
+    /// <summary>
+    /// The class help to get perfomance PropertyDescriptor from your class type. 
+    /// Original code: Marc Gravell
+    /// Change history:
+    /// 20 Apr 2007 Marc Gravell        Renamed
+    /// 21 Aug 2012 Dmitry Statsenko    Reorganized, kept property-part code only, add overload method
+    /// </summary>
+    public class PropertyDescriptorBuilder
     {
-        private readonly PropertyDescriptorCollection propertyCollections;
-
-        private static readonly Dictionary<PropertyInfo, PropertyDescriptor> properties =
+        private static readonly Dictionary<PropertyInfo, PropertyDescriptor> CachedProperties =
             new Dictionary<PropertyInfo, PropertyDescriptor>();
 
-        internal HyperTypeDescriptor(ICustomTypeDescriptor parent)
-            : base(parent)
+        private static readonly ModuleBuilder ModuleBuilder;
+        private static int _counter;
+
+        static PropertyDescriptorBuilder()
         {
-            // скорее всего GetProperties перегружен у parent
-            // потому что parent: ICustomTypeDescriptor
-            propertyCollections = WrapProperties(parent.GetProperties());
+            var assemblyName = new AssemblyName("Hyper.ComponentModel.dynamic");
+            var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
+            ModuleBuilder = assemblyBuilder.DefineDynamicModule("Hyper.ComponentModel.dynamic.dll");
         }
 
-        public override PropertyDescriptorCollection GetProperties(Attribute[] attributes)
+        public static PropertyDescriptor TryCreatePropertyDescriptor(Type objType, string propertyName)
         {
-            return propertyCollections;
+            var descriptorCollection = TypeDescriptor.GetProperties(objType); //TODO РѕС‡РµРЅСЊ РјРµРґР»РµРЅРЅРѕ
+            var descriptor = descriptorCollection.Find(propertyName, false);
+            TryCreatePropertyDescriptor(ref descriptor);
+            return descriptor;
         }
 
-        public override PropertyDescriptorCollection GetProperties()
-        {
-            return propertyCollections;
-        }
-
-        /// <summary>
-        /// Получает свойства в ReflectPropertyDescriptor и преобразует их
-        /// в ReflectPropertyDescriptor с ChainingPropertyDesciptor
-        /// </summary>
-        /// <param name="oldProps"></param>
-        /// <returns></returns>
-        private static PropertyDescriptorCollection WrapProperties(PropertyDescriptorCollection oldProps)
-        {
-            PropertyDescriptor[] newProps = new PropertyDescriptor[oldProps.Count];
-            int index = 0;
-            bool changed = false;
-            // HACK: how to identify reflection, given that the class is internal...
-            Type wrapMe =
-                Assembly.GetAssembly(typeof (PropertyDescriptor)).GetType(
-                    "System.ComponentModel.ReflectPropertyDescriptor");
-            foreach (PropertyDescriptor oldProp in oldProps)
-            {
-                PropertyDescriptor pd = oldProp;
-                // if it looks like reflection, try to create a bespoke descriptor
-                // это условие выполняется всегда, потому что oldProps имеют нужный тип
-                if (ReferenceEquals(wrapMe, pd.GetType()) && TryCreatePropertyDescriptor(ref pd))
-                {
-                    changed = true;
-                }
-                newProps[index++] = pd;
-            }
-
-            return changed ? new PropertyDescriptorCollection(newProps, true) : oldProps;
-        }
-
-        private static readonly ModuleBuilder moduleBuilder;
-        private static int counter;
-
-        static HyperTypeDescriptor()
-        {
-            AssemblyName an = new AssemblyName("Hyper.ComponentModel.dynamic");
-            AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly(an, AssemblyBuilderAccess.Run);
-            moduleBuilder = ab.DefineDynamicModule("Hyper.ComponentModel.dynamic.dll");
-        }
-
-        // TODO изменил на public
         public static bool TryCreatePropertyDescriptor(ref PropertyDescriptor descriptor)
         {
             try
             {
                 PropertyInfo property = descriptor.ComponentType.GetProperty(descriptor.Name);
                 if (property == null) return false;
-                lock (properties)
+                lock (CachedProperties)
                 {
                     PropertyDescriptor foundBuiltAlready;
-                    if (properties.TryGetValue(property, out foundBuiltAlready))
+                    if (CachedProperties.TryGetValue(property, out foundBuiltAlready))
                     {
                         descriptor = foundBuiltAlready;
                         return true;
                     }
 
-                    string name = "_c" + Interlocked.Increment(ref counter);
-                    TypeBuilder tb = moduleBuilder.DefineType(name,
+                    string name = "_c" + Interlocked.Increment(ref _counter);
+                    TypeBuilder tb = ModuleBuilder.DefineType(name,
                                                               TypeAttributes.Sealed | TypeAttributes.NotPublic |
                                                               TypeAttributes.Class | TypeAttributes.BeforeFieldInit |
                                                               TypeAttributes.AutoClass | TypeAttributes.Public,
@@ -106,14 +65,14 @@ namespace LocalizationLibrary.Hyper
                         tb.DefineConstructor(
                             MethodAttributes.HideBySig | MethodAttributes.Public | MethodAttributes.SpecialName |
                             MethodAttributes.RTSpecialName, CallingConventions.Standard,
-                            new Type[] {typeof (PropertyDescriptor)});
+                            new[] {typeof (PropertyDescriptor)});
                     ILGenerator il = cb.GetILGenerator();
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Ldarg_1);
                     il.Emit(OpCodes.Call,
                             typeof (ChainingPropertyDescriptor).GetConstructor(
                                 BindingFlags.NonPublic | BindingFlags.Instance, null,
-                                new Type[] {typeof (PropertyDescriptor)}, null));
+                                new[] {typeof (PropertyDescriptor)}, null));
                     il.Emit(OpCodes.Ret);
 
                     MethodBuilder mb;
@@ -186,14 +145,9 @@ namespace LocalizationLibrary.Hyper
                                          MethodAttributes.Final | MethodAttributes.SpecialName,
                                          baseMethod.CallingConvention, baseMethod.ReturnType, Type.EmptyTypes);
                     il = mb.GetILGenerator();
-                    if (isReadOnly)
-                    {
-                        il.Emit(OpCodes.Ldc_I4_1);
-                    }
-                    else
-                    {
-                        il.Emit(OpCodes.Ldc_I4_0);
-                    }
+
+                    il.Emit(isReadOnly ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0);
+
                     il.Emit(OpCodes.Ret);
                     tb.DefineMethodOverride(mb, baseMethod);
 
@@ -213,14 +167,8 @@ namespace LocalizationLibrary.Hyper
                             il.Emit(OpCodes.Ldarg_1);
                             il.Emit(OpCodes.Castclass, property.DeclaringType);
                             il.Emit(OpCodes.Ldarg_2);
-                            if (property.PropertyType.IsValueType)
-                            {
-                                il.Emit(OpCodes.Unbox_Any, property.PropertyType);
-                            }
-                            else
-                            {
-                                il.Emit(OpCodes.Castclass, property.PropertyType);
-                            }
+                            il.Emit(property.PropertyType.IsValueType ? OpCodes.Unbox_Any : OpCodes.Castclass,
+                                    property.PropertyType);
                             il.Emit(OpCodes.Callvirt, property.GetSetMethod());
                             il.Emit(OpCodes.Ret);
                             tb.DefineMethodOverride(mb, baseMethod);
@@ -272,14 +220,15 @@ namespace LocalizationLibrary.Hyper
                     {
                         return false;
                     }
-                    descriptor = newDesc;
 
-                    properties.Add(property, descriptor);
+                    descriptor = newDesc;
+                    CachedProperties.Add(property, descriptor);
                     return true;
                 }
             }
-            catch
+            catch (Exception exception)
             {
+                Debug.WriteLine(exception);
                 return false;
             }
         }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Security;
 using System.Security.Permissions;
 
 /* Change history:
@@ -10,6 +11,7 @@ using System.Security.Permissions;
  */
 
 namespace LocalizationLibrary.Hyper {
+    [Obsolete]
     internal sealed class HyperTypeDescriptionProvider : TypeDescriptionProvider {
         public static void Add(Type type) {
             TypeDescriptionProvider parent = TypeDescriptor.GetProvider(type);
@@ -45,18 +47,26 @@ namespace LocalizationLibrary.Hyper {
                 return descriptor;
             }
         }
-        [ReflectionPermission(SecurityAction.Assert, Flags = ReflectionPermissionFlag.AllFlags)]
+        [SecuritySafeCritical]
+		[ReflectionPermission(SecurityAction.Assert, Unrestricted = true)]
         private ICustomTypeDescriptor BuildDescriptor(Type objectType)
         {
             // NOTE: "descriptors" already locked here
 
             // get the parent descriptor and add to the dictionary so that
             // building the new descriptor will use the base rather than recursing
+            // нормальный вызов
             ICustomTypeDescriptor descriptor = base.GetTypeDescriptor(objectType, null);
             descriptors.Add(objectType, descriptor);
+
+            //на выходе одно и тоже:
+            //var custom = descriptor.GetProperties(); 
+            //var dotNet = TypeDescriptor.GetProperties(objectType);
+
             try
             {
                 // build a new descriptor from this, and replace the lookup
+                // узнать откуда descriptor ниже берет свой GetProperties
                 descriptor = new HyperTypeDescriptor(descriptor);
                 descriptors[objectType] = descriptor;
                 return descriptor;

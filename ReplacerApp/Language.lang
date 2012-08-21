@@ -1,1 +1,3 @@
-﻿AddFiles="Add files"
+﻿AddFiles="Add files from drive..."
+SelectFiles="Select the files from drive..."
+EmptyFileList="EmptyFileList"

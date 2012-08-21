@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 using System.Security.Permissions;
 using System.Threading;
@@ -11,30 +12,26 @@ using Dem0n13.Replacer.Library;
 using Dem0n13.Replacer.Library.Utils;
 using System.ComponentModel;
 using System.Resources;
+using LocalizationLibrary;
 
 namespace Dem0n13.Replacer.App
 {
     public partial class MainForm : Form
     {
-        private readonly LocalizationManager1 _localizationManager1;
+        private readonly LocalizationManager _localizationManager;
 
         private TextReplacer _replacer;
         private RegexProcessor _regex;
         private List<RelatedMatch> _matches;
         private Replacement _replacement;
-        
+
         public MainForm()
         {
             // считывание настроек, в т.ч. языка
-            
             InitializeComponent();
-            _localizationManager1 = new LocalizationManager1(this);
-            var l = new LocalizationLibrary.LocalizationManager<Control>("Language");
-            l.ApplyResource(FilesChooserBtn, "Text", "AddFiles");
-            l.ApplyResource(FilesChooserBtn, "Text", "AddFiles");
-            //var res = new ResourceManager("Language", Assembly.GetExecutingAssembly());
-            //var n = res.GetString("TestStr");
-
+            _localizationManager = new LocalizationManager("Language");
+            _localizationManager.ApplyResource(FilesChooserBtn, "Text", "SelectFiles");
+            _localizationManager.ApplyResource(FileListBox, "Text", "EmptyFileList");
         }
 
         #region Navigation
@@ -81,11 +78,12 @@ namespace Dem0n13.Replacer.App
             {
                 if (fileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    if (_localizationManager1.IsDefaultResource(FilesChooserBtn))
+                    if (_localizationManager.HasResource(FileListBox, "Text"))
                     {
+                        _localizationManager.CleanResource(FileListBox, "Text");
                         FileListBox.Clear();
-                        _localizationManager1.SetResource(FileListBox, string.Empty);
-                        _localizationManager1.SetResource(FilesChooserBtn, "FilesChooserBtn_Adding");
+
+                        _localizationManager.ApplyResource(FilesChooserBtn, "Text", "AddFiles");
                     }
 
                     foreach (var fileName in fileDialog.FileNames)
@@ -106,8 +104,9 @@ namespace Dem0n13.Replacer.App
         private void ClearFilelistBtnClick(object sender, EventArgs e)
         {
             _inputFiles.Clear();
-            _localizationManager1.SetDefaultResource(FilesChooserBtn);
-            _localizationManager1.SetDefaultResource(FileListBox);
+            
+            _localizationManager.ApplyResource(FilesChooserBtn, "Text", "SelectFiles");
+            _localizationManager.ApplyResource(FileListBox, "Text", "EmptyFileList");
         }
 
         private void SaveFilelistBtnClick(object sender, EventArgs e)
@@ -119,8 +118,8 @@ namespace Dem0n13.Replacer.App
         {
             if (_inputFiles.Count == 0)
             {
-                MessageBox.Show(_localizationManager1.GetResourceString("NoFiles"),
-                                _localizationManager1.GetResourceString("NoFilesCap"),
+                MessageBox.Show(_localizationManager.GetString("EmptyFileList"),
+                                _localizationManager.GetString("NoFilesCap"),
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
