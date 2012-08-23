@@ -8,7 +8,7 @@ using Dem0n13.Replacer.Library.Utils;
 
 namespace Dem0n13.Replacer.Library
 {
-    public class TextReplacer : AbstractTextLengthChanger
+    public class TextReplacer : TextLengthChanger
     {
         private readonly LazyString _workingText;
         private int TailStartIndex { get { return _workingText.Length - _workingText.Last.Value.Length; } }

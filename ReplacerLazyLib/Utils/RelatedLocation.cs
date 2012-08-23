@@ -13,7 +13,7 @@
 
         public int Length { get; set; }
         
-        public void SetOwner(AbstractTextLengthChanger owner)
+        public void SetOwner(TextLengthChanger owner)
         {
             _totalLegthCorrection = owner.TotalLegthCorrection;
         }

@@ -55,8 +55,8 @@
             this.PossibleReplacesCaption = new System.Windows.Forms.GroupBox();
             this.PreviewStageLayout = new System.Windows.Forms.Panel();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
             this.CancelBtn = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.FilesSelectionStageLayout.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -87,18 +87,18 @@
             this.RegExpBox.Margin = new System.Windows.Forms.Padding(5);
             this.RegExpBox.Multiline = true;
             this.RegExpBox.Name = "RegExpBox";
-            this.RegExpBox.Size = new System.Drawing.Size(281, 171);
+            this.RegExpBox.Size = new System.Drawing.Size(285, 178);
             this.RegExpBox.TabIndex = 1;
             // 
             // ReplacementBox
             // 
             this.ReplacementBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ReplacementBox.Font = new System.Drawing.Font("Consolas", 12F);
-            this.ReplacementBox.Location = new System.Drawing.Point(337, 66);
+            this.ReplacementBox.Location = new System.Drawing.Point(341, 66);
             this.ReplacementBox.Margin = new System.Windows.Forms.Padding(5);
             this.ReplacementBox.Multiline = true;
             this.ReplacementBox.Name = "ReplacementBox";
-            this.ReplacementBox.Size = new System.Drawing.Size(282, 171);
+            this.ReplacementBox.Size = new System.Drawing.Size(286, 178);
             this.ReplacementBox.TabIndex = 3;
             // 
             // LogBox
@@ -109,7 +109,7 @@
             this.LogBox.Margin = new System.Windows.Forms.Padding(5);
             this.LogBox.Multiline = true;
             this.LogBox.Name = "LogBox";
-            this.LogBox.Size = new System.Drawing.Size(614, 364);
+            this.LogBox.Size = new System.Drawing.Size(622, 375);
             this.LogBox.TabIndex = 5;
             // 
             // RegExpCaption
@@ -127,7 +127,7 @@
             // 
             this.ReplacementCaption.AutoSize = true;
             this.ReplacementCaption.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ReplacementCaption.Location = new System.Drawing.Point(337, 36);
+            this.ReplacementCaption.Location = new System.Drawing.Point(341, 36);
             this.ReplacementCaption.Margin = new System.Windows.Forms.Padding(5);
             this.ReplacementCaption.Name = "ReplacementCaption";
             this.ReplacementCaption.Size = new System.Drawing.Size(149, 20);
@@ -151,7 +151,7 @@
             this.RegexStageBtn.AutoSize = true;
             this.RegexStageBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.RegexStageBtn.Dock = System.Windows.Forms.DockStyle.Right;
-            this.RegexStageBtn.Location = new System.Drawing.Point(544, 410);
+            this.RegexStageBtn.Location = new System.Drawing.Point(552, 421);
             this.RegexStageBtn.Margin = new System.Windows.Forms.Padding(5);
             this.RegexStageBtn.MinimumSize = new System.Drawing.Size(75, 0);
             this.RegexStageBtn.Name = "RegexStageBtn";
@@ -167,7 +167,7 @@
             this.FilesSelectionStageLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.FilesSelectionStageLayout.Location = new System.Drawing.Point(0, 0);
             this.FilesSelectionStageLayout.Name = "FilesSelectionStageLayout";
-            this.FilesSelectionStageLayout.Size = new System.Drawing.Size(624, 442);
+            this.FilesSelectionStageLayout.Size = new System.Drawing.Size(632, 453);
             this.FilesSelectionStageLayout.TabIndex = 13;
             this.FilesSelectionStageLayout.Visible = false;
             // 
@@ -194,7 +194,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(624, 442);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(632, 453);
             this.tableLayoutPanel1.TabIndex = 14;
             // 
             // flowLayoutPanel1
@@ -203,9 +203,9 @@
             this.flowLayoutPanel1.Controls.Add(this.ClearFileListBtn);
             this.flowLayoutPanel1.Controls.Add(this.SaveFileListBtn);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 365);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 376);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(618, 37);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(626, 37);
             this.flowLayoutPanel1.TabIndex = 19;
             // 
             // ClearFileListBtn
@@ -243,7 +243,8 @@
             this.FileListBox.Multiline = true;
             this.FileListBox.Name = "FileListBox";
             this.FileListBox.ReadOnly = true;
-            this.FileListBox.Size = new System.Drawing.Size(618, 221);
+            this.FileListBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.FileListBox.Size = new System.Drawing.Size(626, 232);
             this.FileListBox.TabIndex = 19;
             this.FileListBox.Text = "Список пока пуст...\r\nВыберите файлы или откройте ранее сохраненный список.";
             // 
@@ -279,7 +280,7 @@
             this.RegexStageLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.RegexStageLayout.Location = new System.Drawing.Point(0, 0);
             this.RegexStageLayout.Name = "RegexStageLayout";
-            this.RegexStageLayout.Size = new System.Drawing.Size(624, 442);
+            this.RegexStageLayout.Size = new System.Drawing.Size(632, 453);
             this.RegexStageLayout.TabIndex = 14;
             this.RegexStageLayout.Visible = false;
             // 
@@ -310,7 +311,7 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 42.85714F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(624, 442);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(632, 453);
             this.tableLayoutPanel2.TabIndex = 14;
             // 
             // FileSelectionStageBtn
@@ -318,7 +319,7 @@
             this.FileSelectionStageBtn.AutoSize = true;
             this.FileSelectionStageBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.FileSelectionStageBtn.Dock = System.Windows.Forms.DockStyle.Left;
-            this.FileSelectionStageBtn.Location = new System.Drawing.Point(5, 409);
+            this.FileSelectionStageBtn.Location = new System.Drawing.Point(5, 420);
             this.FileSelectionStageBtn.Margin = new System.Windows.Forms.Padding(5);
             this.FileSelectionStageBtn.MinimumSize = new System.Drawing.Size(75, 0);
             this.FileSelectionStageBtn.Name = "FileSelectionStageBtn";
@@ -346,10 +347,10 @@
             this.label4.AutoSize = true;
             this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label4.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label4.Location = new System.Drawing.Point(301, 71);
+            this.label4.Location = new System.Drawing.Point(305, 71);
             this.label4.Margin = new System.Windows.Forms.Padding(10);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(21, 161);
+            this.label4.Size = new System.Drawing.Size(21, 168);
             this.label4.TabIndex = 13;
             this.label4.Text = ">";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -359,7 +360,7 @@
             this.PreviewStageBtn.AutoSize = true;
             this.PreviewStageBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.PreviewStageBtn.Dock = System.Windows.Forms.DockStyle.Right;
-            this.PreviewStageBtn.Location = new System.Drawing.Point(544, 409);
+            this.PreviewStageBtn.Location = new System.Drawing.Point(552, 420);
             this.PreviewStageBtn.Margin = new System.Windows.Forms.Padding(5);
             this.PreviewStageBtn.MinimumSize = new System.Drawing.Size(75, 0);
             this.PreviewStageBtn.Name = "PreviewStageBtn";
@@ -376,20 +377,20 @@
             this.tableLayoutPanel2.SetColumnSpan(this.flowLayoutPanel2, 3);
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel2.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 381);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 392);
             this.flowLayoutPanel2.MinimumSize = new System.Drawing.Size(20, 20);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(618, 20);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(626, 20);
             this.flowLayoutPanel2.TabIndex = 15;
             // 
             // PossibleMatchesCaption
             // 
             this.PossibleMatchesCaption.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.PossibleMatchesCaption.Location = new System.Drawing.Point(5, 247);
+            this.PossibleMatchesCaption.Location = new System.Drawing.Point(5, 254);
             this.PossibleMatchesCaption.Margin = new System.Windows.Forms.Padding(5);
             this.PossibleMatchesCaption.MinimumSize = new System.Drawing.Size(20, 20);
             this.PossibleMatchesCaption.Name = "PossibleMatchesCaption";
-            this.PossibleMatchesCaption.Size = new System.Drawing.Size(281, 126);
+            this.PossibleMatchesCaption.Size = new System.Drawing.Size(285, 130);
             this.PossibleMatchesCaption.TabIndex = 16;
             this.PossibleMatchesCaption.TabStop = false;
             this.PossibleMatchesCaption.Text = "PossibleMatchesCaption";
@@ -397,11 +398,11 @@
             // PossibleReplacesCaption
             // 
             this.PossibleReplacesCaption.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.PossibleReplacesCaption.Location = new System.Drawing.Point(337, 247);
+            this.PossibleReplacesCaption.Location = new System.Drawing.Point(341, 254);
             this.PossibleReplacesCaption.Margin = new System.Windows.Forms.Padding(5);
             this.PossibleReplacesCaption.MinimumSize = new System.Drawing.Size(20, 20);
             this.PossibleReplacesCaption.Name = "PossibleReplacesCaption";
-            this.PossibleReplacesCaption.Size = new System.Drawing.Size(282, 126);
+            this.PossibleReplacesCaption.Size = new System.Drawing.Size(286, 130);
             this.PossibleReplacesCaption.TabIndex = 18;
             this.PossibleReplacesCaption.TabStop = false;
             this.PossibleReplacesCaption.Text = "PossibleReplacesCaption";
@@ -412,7 +413,7 @@
             this.PreviewStageLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PreviewStageLayout.Location = new System.Drawing.Point(0, 0);
             this.PreviewStageLayout.Name = "PreviewStageLayout";
-            this.PreviewStageLayout.Size = new System.Drawing.Size(624, 442);
+            this.PreviewStageLayout.Size = new System.Drawing.Size(632, 453);
             this.PreviewStageLayout.TabIndex = 15;
             // 
             // tableLayoutPanel3
@@ -429,8 +430,23 @@
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(624, 442);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(632, 453);
             this.tableLayoutPanel3.TabIndex = 0;
+            // 
+            // CancelBtn
+            // 
+            this.CancelBtn.AutoSize = true;
+            this.CancelBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.CancelBtn.Dock = System.Windows.Forms.DockStyle.Left;
+            this.CancelBtn.Location = new System.Drawing.Point(5, 421);
+            this.CancelBtn.Margin = new System.Windows.Forms.Padding(5);
+            this.CancelBtn.MinimumSize = new System.Drawing.Size(75, 0);
+            this.CancelBtn.Name = "CancelBtn";
+            this.CancelBtn.Size = new System.Drawing.Size(75, 27);
+            this.CancelBtn.TabIndex = 18;
+            this.CancelBtn.Text = "CancelBtn";
+            this.CancelBtn.UseVisualStyleBackColor = true;
+            this.CancelBtn.Click += new System.EventHandler(this.CancelBtnClick);
             // 
             // label1
             // 
@@ -445,29 +461,14 @@
             this.label1.TabIndex = 13;
             this.label1.Text = "3. Replacing...";
             // 
-            // CancelBtn
-            // 
-            this.CancelBtn.AutoSize = true;
-            this.CancelBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.CancelBtn.Dock = System.Windows.Forms.DockStyle.Left;
-            this.CancelBtn.Location = new System.Drawing.Point(5, 410);
-            this.CancelBtn.Margin = new System.Windows.Forms.Padding(5);
-            this.CancelBtn.MinimumSize = new System.Drawing.Size(75, 0);
-            this.CancelBtn.Name = "CancelBtn";
-            this.CancelBtn.Size = new System.Drawing.Size(75, 27);
-            this.CancelBtn.TabIndex = 18;
-            this.CancelBtn.Text = "CancelBtn";
-            this.CancelBtn.UseVisualStyleBackColor = true;
-            this.CancelBtn.Click += new System.EventHandler(this.CancelBtnClick);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(624, 442);
+            this.ClientSize = new System.Drawing.Size(632, 453);
+            this.Controls.Add(this.FilesSelectionStageLayout);
             this.Controls.Add(this.PreviewStageLayout);
             this.Controls.Add(this.RegexStageLayout);
-            this.Controls.Add(this.FilesSelectionStageLayout);
             this.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MinimumSize = new System.Drawing.Size(640, 480);

@@ -23,7 +23,7 @@ namespace Dem0n13.Replacer.Library
             get { return Groups[0].Value; } // Groups всегда содержит как минимум 1 элемент
         }
 
-        public RelatedMatch(Match match, AbstractTextLengthChanger owner = null)
+        public RelatedMatch(Match match, TextLengthChanger owner = null)
         {
             StartIndex = match.Index;
             Length = match.Length;

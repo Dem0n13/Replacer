@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Dem0n13.LocalizationLibrary;
 using Dem0n13.Replacer.App.Properties;
 using Dem0n13.Replacer.Library;
+using Dem0n13.Replacer.Library.Tasks;
 using Dem0n13.Replacer.Library.Utils;
 using System.ComponentModel;
 using System.Resources;
@@ -145,7 +146,8 @@ namespace Dem0n13.Replacer.App
             SwitchStage(ReplacerStages.FilesSelection);
         }
 
-        private ReplacementTask _replacementTask;
+        
+        private ReplacerTaskManager _replacerTaskManager = new ReplacerTaskManager();
 
         private void PreviewStageBtnClick(object sender, EventArgs e)
         {
@@ -158,8 +160,9 @@ namespace Dem0n13.Replacer.App
             }
             
             SwitchStage(ReplacerStages.Preview);
-            _replacementTask = new ReplacementTask(_inputFiles, RegExpBox.Text, ReplacementBox.Text);
-            _replacementTask.Run(); 
+            _replacerTaskManager.Tasks.Clear();
+            _replacerTaskManager.Tasks.Add(new ReplacerTask(_inputFiles, RegExpBox.Text, ReplacementBox.Text));
+            _replacerTaskManager.RunAll();
         }
 
         #endregion

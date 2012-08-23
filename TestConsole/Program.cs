@@ -30,7 +30,7 @@ namespace TestConsole
             Console.WriteLine("new regex/repl" + sw.ElapsedTicks);
 
             sw.Restart();
-            var matches = regex.RelatedMatches(s);
+            var matches = regex.RelatedMatches(str, s);
             Console.WriteLine("matches" + sw.ElapsedTicks+" in ms:"+sw.Elapsed);
 
             sw.Reset();
