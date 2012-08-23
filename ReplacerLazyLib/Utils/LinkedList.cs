@@ -34,14 +34,11 @@ namespace Dem0n13.Replacer.Library.Utils
 
         public void Append(LinkedList<T> list)
         {
+            if (list.Count == 0) return;
             if (Count == 0)
-            {
                 First = list.First;
-            }
             else
-            {
                 Last.Next = list.First;
-            }
             list.First.Previous = Last;
             Last = list.Last;
             

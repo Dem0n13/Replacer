@@ -31,12 +31,9 @@
             this.ChooseFilesBtn = new System.Windows.Forms.Button();
             this.RegExpBox = new System.Windows.Forms.TextBox();
             this.ReplacementBox = new System.Windows.Forms.TextBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.LogBox = new System.Windows.Forms.TextBox();
-            this.PreviewBtn = new System.Windows.Forms.Button();
             this.RegExpCaption = new System.Windows.Forms.Label();
             this.ReplacementCaption = new System.Windows.Forms.Label();
-            this.LaunchBtn = new System.Windows.Forms.Button();
             this.FileSelectionCaption = new System.Windows.Forms.Label();
             this.RegexStageBtn = new System.Windows.Forms.Button();
             this.FilesSelectionStageLayout = new System.Windows.Forms.Panel();
@@ -56,11 +53,17 @@
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.PossibleMatchesCaption = new System.Windows.Forms.GroupBox();
             this.PossibleReplacesCaption = new System.Windows.Forms.GroupBox();
+            this.PreviewStageLayout = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.CancelBtn = new System.Windows.Forms.Button();
             this.FilesSelectionStageLayout.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.RegexStageLayout.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            this.PreviewStageLayout.SuspendLayout();
+            this.tableLayoutPanel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // ChooseFilesBtn
@@ -98,36 +101,16 @@
             this.ReplacementBox.Size = new System.Drawing.Size(282, 171);
             this.ReplacementBox.TabIndex = 3;
             // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Enabled = false;
-            this.checkBox1.Location = new System.Drawing.Point(1030, 20);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(138, 21);
-            this.checkBox1.TabIndex = 4;
-            this.checkBox1.Text = "Блокировать файл";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
             // LogBox
             // 
+            this.LogBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.LogBox.Font = new System.Drawing.Font("Consolas", 9.75F);
-            this.LogBox.Location = new System.Drawing.Point(670, 170);
-            this.LogBox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.LogBox.Location = new System.Drawing.Point(5, 36);
+            this.LogBox.Margin = new System.Windows.Forms.Padding(5);
             this.LogBox.Multiline = true;
             this.LogBox.Name = "LogBox";
-            this.LogBox.Size = new System.Drawing.Size(230, 200);
+            this.LogBox.Size = new System.Drawing.Size(614, 364);
             this.LogBox.TabIndex = 5;
-            // 
-            // PreviewBtn
-            // 
-            this.PreviewBtn.Location = new System.Drawing.Point(710, 70);
-            this.PreviewBtn.Name = "PreviewBtn";
-            this.PreviewBtn.Size = new System.Drawing.Size(230, 30);
-            this.PreviewBtn.TabIndex = 6;
-            this.PreviewBtn.Text = "Поиск совпадений";
-            this.PreviewBtn.UseVisualStyleBackColor = true;
-            this.PreviewBtn.Click += new System.EventHandler(this.PreviewBtnClick);
             // 
             // RegExpCaption
             // 
@@ -150,17 +133,6 @@
             this.ReplacementCaption.Size = new System.Drawing.Size(149, 20);
             this.ReplacementCaption.TabIndex = 8;
             this.ReplacementCaption.Text = "Выражение замены";
-            // 
-            // LaunchBtn
-            // 
-            this.LaunchBtn.Enabled = false;
-            this.LaunchBtn.Location = new System.Drawing.Point(700, 120);
-            this.LaunchBtn.Name = "LaunchBtn";
-            this.LaunchBtn.Size = new System.Drawing.Size(230, 30);
-            this.LaunchBtn.TabIndex = 9;
-            this.LaunchBtn.Text = "Замена совпадений";
-            this.LaunchBtn.UseVisualStyleBackColor = true;
-            this.LaunchBtn.Click += new System.EventHandler(this.LaunchBtnClick);
             // 
             // FileSelectionCaption
             // 
@@ -365,9 +337,9 @@
             this.label3.Location = new System.Drawing.Point(5, 5);
             this.label3.Margin = new System.Windows.Forms.Padding(5);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(235, 21);
+            this.label3.Size = new System.Drawing.Size(384, 21);
             this.label3.TabIndex = 12;
-            this.label3.Text = "1. Select the files for proccessing";
+            this.label3.Text = "2. Input the regular expression and replacement string";
             // 
             // label4
             // 
@@ -420,7 +392,7 @@
             this.PossibleMatchesCaption.Size = new System.Drawing.Size(281, 126);
             this.PossibleMatchesCaption.TabIndex = 16;
             this.PossibleMatchesCaption.TabStop = false;
-            this.PossibleMatchesCaption.Text = "groupBox1";
+            this.PossibleMatchesCaption.Text = "PossibleMatchesCaption";
             // 
             // PossibleReplacesCaption
             // 
@@ -432,19 +404,70 @@
             this.PossibleReplacesCaption.Size = new System.Drawing.Size(282, 126);
             this.PossibleReplacesCaption.TabIndex = 18;
             this.PossibleReplacesCaption.TabStop = false;
-            this.PossibleReplacesCaption.Text = "groupBox1";
+            this.PossibleReplacesCaption.Text = "PossibleReplacesCaption";
+            // 
+            // PreviewStageLayout
+            // 
+            this.PreviewStageLayout.Controls.Add(this.tableLayoutPanel3);
+            this.PreviewStageLayout.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.PreviewStageLayout.Location = new System.Drawing.Point(0, 0);
+            this.PreviewStageLayout.Name = "PreviewStageLayout";
+            this.PreviewStageLayout.Size = new System.Drawing.Size(624, 442);
+            this.PreviewStageLayout.TabIndex = 15;
+            // 
+            // tableLayoutPanel3
+            // 
+            this.tableLayoutPanel3.ColumnCount = 1;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel3.Controls.Add(this.CancelBtn, 0, 2);
+            this.tableLayoutPanel3.Controls.Add(this.label1, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.LogBox, 0, 1);
+            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 3;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(624, 442);
+            this.tableLayoutPanel3.TabIndex = 0;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.tableLayoutPanel3.SetColumnSpan(this.label1, 3);
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 12F);
+            this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))));
+            this.label1.Location = new System.Drawing.Point(5, 5);
+            this.label1.Margin = new System.Windows.Forms.Padding(5);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(103, 21);
+            this.label1.TabIndex = 13;
+            this.label1.Text = "3. Replacing...";
+            // 
+            // CancelBtn
+            // 
+            this.CancelBtn.AutoSize = true;
+            this.CancelBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.CancelBtn.Dock = System.Windows.Forms.DockStyle.Left;
+            this.CancelBtn.Location = new System.Drawing.Point(5, 410);
+            this.CancelBtn.Margin = new System.Windows.Forms.Padding(5);
+            this.CancelBtn.MinimumSize = new System.Drawing.Size(75, 0);
+            this.CancelBtn.Name = "CancelBtn";
+            this.CancelBtn.Size = new System.Drawing.Size(75, 27);
+            this.CancelBtn.TabIndex = 18;
+            this.CancelBtn.Text = "CancelBtn";
+            this.CancelBtn.UseVisualStyleBackColor = true;
+            this.CancelBtn.Click += new System.EventHandler(this.CancelBtnClick);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 442);
+            this.Controls.Add(this.PreviewStageLayout);
             this.Controls.Add(this.RegexStageLayout);
             this.Controls.Add(this.FilesSelectionStageLayout);
-            this.Controls.Add(this.LaunchBtn);
-            this.Controls.Add(this.PreviewBtn);
-            this.Controls.Add(this.LogBox);
-            this.Controls.Add(this.checkBox1);
             this.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MinimumSize = new System.Drawing.Size(640, 480);
@@ -459,8 +482,10 @@
             this.RegexStageLayout.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
+            this.PreviewStageLayout.ResumeLayout(false);
+            this.tableLayoutPanel3.ResumeLayout(false);
+            this.tableLayoutPanel3.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -469,12 +494,9 @@
         private System.Windows.Forms.Button ChooseFilesBtn;
         private System.Windows.Forms.TextBox RegExpBox;
         private System.Windows.Forms.TextBox ReplacementBox;
-        private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.TextBox LogBox;
-        private System.Windows.Forms.Button PreviewBtn;
         private System.Windows.Forms.Label RegExpCaption;
         private System.Windows.Forms.Label ReplacementCaption;
-        private System.Windows.Forms.Button LaunchBtn;
         private System.Windows.Forms.Label FileSelectionCaption;
         private System.Windows.Forms.Button RegexStageBtn;
         private System.Windows.Forms.Panel FilesSelectionStageLayout;
@@ -494,6 +516,10 @@
         private System.Windows.Forms.GroupBox PossibleMatchesCaption;
         private System.Windows.Forms.Button FileSelectionStageBtn;
         private System.Windows.Forms.GroupBox PossibleReplacesCaption;
+        private System.Windows.Forms.Panel PreviewStageLayout;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+        private System.Windows.Forms.Button CancelBtn;
+        private System.Windows.Forms.Label label1;
     }
 }
 

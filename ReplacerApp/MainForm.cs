@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -20,11 +19,6 @@ namespace Dem0n13.Replacer.App
     public partial class MainForm : Form
     {
         private LocalizationManager _localizationManager;
-
-        private TextReplacer _replacer;
-        private RegexProcessor _regex;
-        private List<RelatedMatch> _matches;
-        private Replacement _replacement;
 
         public MainForm()
         {
@@ -62,7 +56,8 @@ namespace Dem0n13.Replacer.App
                     visibleLayout = RegexStageLayout;
                     break;
                 case ReplacerStages.Preview:
-                    //break;
+                    visibleLayout = PreviewStageLayout;
+                    break;
                 case ReplacerStages.Replacing:
                     //break;
                 default:
@@ -134,7 +129,7 @@ namespace Dem0n13.Replacer.App
             if (_inputFiles.Count == 0)
             {
                 MessageBox.Show(_localizationManager.GetString("EmptyFileList"),
-                                _localizationManager.GetString("NoFilesCap"),
+                                _localizationManager.GetString("EmptyFileListCaption"),
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
@@ -150,65 +145,28 @@ namespace Dem0n13.Replacer.App
             SwitchStage(ReplacerStages.FilesSelection);
         }
 
+        private ReplacementTask _replacementTask;
+
         private void PreviewStageBtnClick(object sender, EventArgs e)
         {
-            //
+            if (RegExpBox.Text.Length == 0)
+            {
+                MessageBox.Show(_localizationManager.GetString("EmptyRegex"),
+                                _localizationManager.GetString("EmptyRegexCaption"),
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            
             SwitchStage(ReplacerStages.Preview);
+            _replacementTask = new ReplacementTask(_inputFiles, RegExpBox.Text, ReplacementBox.Text);
+            _replacementTask.Run(); 
         }
 
         #endregion
 
-        private void PreviewBtnClick(object sender, EventArgs e)
+        private void CancelBtnClick(object sender, EventArgs e)
         {
-            var sw = new Stopwatch();
-
-            sw.Restart();
-            _replacer = new TextReplacer(_inputFiles[0].ReadText()); //TODO
-            LogBox.AppendText("Файл загружен" + Environment.NewLine);
-            LogBox.AppendText(sw.ElapsedTicks + Environment.NewLine);
-
-            sw.Restart();
-            _regex = new RegexProcessor(RegExpBox.Text);
-            LogBox.AppendText("Регулярное выражение собрано" + Environment.NewLine);
-
-            _replacement = new Replacement(ReplacementBox.Text);
-            LogBox.AppendText(sw.ElapsedTicks + Environment.NewLine);
-
-            sw.Restart();
-            _matches = _regex.Matches(_replacer);
-            LogBox.AppendText(sw.ElapsedTicks + Environment.NewLine);
-            if (_matches[0].Success)
-            {
-                LogBox.AppendText(_matches.Count + " совпадений" + Environment.NewLine);
-                LaunchBtn.Enabled = true;
-            }
-            else
-            {
-                LogBox.AppendText("0 совпадений" + Environment.NewLine);
-                LaunchBtn.Enabled = false;
-            }
+            SwitchStage(ReplacerStages.RegexInput);
         }
-
-        private void LaunchBtnClick(object sender, EventArgs e)
-        {
-            var sw = new Stopwatch();
-            var sw1 = new Stopwatch();
-
-            foreach (var textMatch in _matches)
-            {
-                sw.Start();
-                var replacementStr = _replacement.CreateCopyWithGroups(textMatch);
-                sw.Stop();
-                sw1.Start();
-                _replacer.Replace(textMatch, replacementStr);
-                sw1.Stop();
-            }
-
-            LogBox.AppendText(sw.ElapsedTicks.ToString() + Environment.NewLine);
-            LogBox.AppendText(sw1.ElapsedTicks.ToString() + Environment.NewLine);
-            _inputFiles[0].WriteText(_replacer.BuildResult()); //TOOD
-        }
-
-
     }
 }
