@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Security.Permissions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Dem0n13.LocalizationLibrary;
 using Dem0n13.Replacer.App.Properties;
@@ -28,6 +29,8 @@ namespace Dem0n13.Replacer.App
             var asmName = Assembly.GetExecutingAssembly().GetName();
             Text = string.Format("{0} v.{1}", asmName.Name, asmName.Version);
             SwitchStage(ReplacerStages.FilesSelection);
+            //var context = TaskScheduler.FromCurrentSynchronizationContext();
+            _replacerTaskManager = new ReplacerTaskManager(TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private void InitializeLocalization()
@@ -146,8 +149,8 @@ namespace Dem0n13.Replacer.App
             SwitchStage(ReplacerStages.FilesSelection);
         }
 
-        
-        private ReplacerTaskManager _replacerTaskManager = new ReplacerTaskManager();
+
+        private ReplacerTaskManager _replacerTaskManager;
 
         private void PreviewStageBtnClick(object sender, EventArgs e)
         {
@@ -160,9 +163,16 @@ namespace Dem0n13.Replacer.App
             }
             
             SwitchStage(ReplacerStages.Preview);
+            _replacerTaskManager.ProgressChanged += ReplacerTaskManagerOnProgressChanged;
+
             _replacerTaskManager.Tasks.Clear();
             _replacerTaskManager.Tasks.Add(new ReplacerTask(_inputFiles, RegExpBox.Text, ReplacementBox.Text));
             _replacerTaskManager.RunAll();
+        }
+
+        private void ReplacerTaskManagerOnProgressChanged(object sender, ManagerProgressChangedEventArgs args)
+        {
+            LogBox.AppendText(string.Format("{0}: {1}", args.CurrentItem, args.ProgressPercentage));
         }
 
         #endregion

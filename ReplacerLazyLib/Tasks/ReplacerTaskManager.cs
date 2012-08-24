@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Dem0n13.Replacer.Library.Tasks
@@ -9,34 +11,33 @@ namespace Dem0n13.Replacer.Library.Tasks
     {
         public List<ReplacerTask> Tasks = new List<ReplacerTask>();
         public event EventHandler<ManagerProgressChangedEventArgs> ProgressChanged;
+        private readonly TaskScheduler _uiThread;
 
         public void OnProgressChanged(ManagerProgressChangedEventArgs e)
         {
-            
+            Debug.WriteLine("OnProgressChanged(ManagerProgressChangedEventArgs e)");
             var handler = ProgressChanged;
             if (handler != null) handler(this, e);
         }
 
-        public ReplacerTaskManager()
+        public ReplacerTaskManager(TaskScheduler fromCurrentSynchronizationContext)
         {
-            
+            _uiThread = fromCurrentSynchronizationContext;
+            //Debug.WriteLine(_uiThread == Task.Factory);
         }
 
         public void RunAll()
         {
-            for (var i = 0; i < Tasks.Count; i++)
-            {
-                var index = i;
-                Tasks[i].ProgressChanged +=
-                    (sender, args) => OnProgressChanged(new ManagerProgressChangedEventArgs(index, args));
-            }
-            /*var tf = new TaskFactory();
-            var sch = tf.Scheduler;
+            var i = 0; 
+            Tasks.ForEach(task => task.ProgressChanged += (sender, args) => Task.Factory.StartNew(
+                () => OnProgressChanged(new ManagerProgressChangedEventArgs(i++, args)),CancellationToken.None,TaskCreationOptions.None, _uiThread));
+
+            var workTask = Task.Factory.StartNew(() => { }, TaskCreationOptions.PreferFairness);
             foreach (var replacerTask in Tasks)
             {
-                tf.StartNew()
-            }*/
-            var task = Task.Factory.StartNew(Tasks[0].Run);
+                var rTask = replacerTask;
+                workTask.ContinueWith(_ => rTask.Run());
+            }
         }
 
         public void Stop()
