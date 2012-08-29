@@ -11,7 +11,7 @@ namespace Dem0n13.Replacer.Library.Tasks
 {
     public class ReplacerTask
     {
-        public const int InitialRefreshPeriod = 500;
+        public const int InitialRefreshPeriod = 250;
         private readonly TextFile[] _files;
         private readonly RegexProcessor _regexProcessor;
         private readonly Replacement _replacement;
@@ -31,10 +31,9 @@ namespace Dem0n13.Replacer.Library.Tasks
             get { return _currentRefreshPeriod; }
             set
             {
-                if (value == _currentRefreshPeriod) return;
+                if ((_refresher == null) || (value == _currentRefreshPeriod)) return;
                 _currentRefreshPeriod = value;
                 _refresher.Change(value, value);
-                //Debug.WriteLine("_currentRefreshPeriod =" + value);
             }
         }
 
@@ -97,7 +96,7 @@ namespace Dem0n13.Replacer.Library.Tasks
             _files = files.ToArray();
         }
 
-        public void Run()
+        public void Run(CancellationToken cancellationToken)
         {
             var sw = Stopwatch.StartNew();
 
@@ -109,18 +108,18 @@ namespace Dem0n13.Replacer.Library.Tasks
                 Parallel.For(0, _files.Length,
                              options, i => _replacerMicroTasks[i] = new ReplacerMicroTask(_files[i], _regexProcessor, _replacement));
             }
-
+            
             _refresher = new Timer(RefreshStatistics, null, 0, CurrentRefreshPeriod);
-
-            Parallel.ForEach(_replacerMicroTasks, options, task => task.Run());
+            
+            Parallel.ForEach(_replacerMicroTasks, options, task => task.Run(cancellationToken));
 
             RefreshStatistics();
             _refresher.Dispose();
 
-            Debug.WriteLine("Time: {0}, {1}", sw.Elapsed, String.Join(",", ReplacerMicroTask.PerfomanceVector));
-            Debug.WriteLine("Regex all: {0}, delta: {1}", new TimeSpan(RegexProcessor.PerfomanceCounter),
+            Debug.WriteLine("Time: {0}", sw.Elapsed);
+            /*Debug.WriteLine("Regex all: {0}, delta: {1}", new TimeSpan(RegexProcessor.PerfomanceCounter),
                             new TimeSpan(ReplacerMicroTask.PerfomanceVector[MicroTaskStates.Searching] -
-                                         RegexProcessor.PerfomanceCounter));
+                                         RegexProcessor.PerfomanceCounter));*/
         }
     }
 }

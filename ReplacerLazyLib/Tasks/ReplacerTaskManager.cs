@@ -7,47 +7,64 @@ using System.Threading.Tasks;
 
 namespace Dem0n13.Replacer.Library.Tasks
 {
-    public class ReplacerTaskManager
+    public sealed class ReplacerTaskManager
     {
         public List<ReplacerTask> Tasks = new List<ReplacerTask>();
-        public event EventHandler<ManagerProgressChangedEventArgs> ProgressChanged;
-        private readonly TaskScheduler _uiThread;
+        private readonly IProgress _progress;
+        private  CancellationToken _cancellation;
+        private CancellationTokenSource _cancellationSource;
+        public bool Busy { get; private set; }
 
-        public void OnProgressChanged(ManagerProgressChangedEventArgs e)
+        public ReplacerTaskManager(IProgress progress)
         {
-            Debug.WriteLine("OnProgressChanged(ManagerProgressChangedEventArgs e)");
-            var handler = ProgressChanged;
-            if (handler != null) handler(this, e);
+            _progress = progress;
         }
 
-        public ReplacerTaskManager(TaskScheduler fromCurrentSynchronizationContext)
+        public void RunAllAsync()
         {
-            _uiThread = fromCurrentSynchronizationContext;
-            //Debug.WriteLine(_uiThread == Task.Factory);
+            Debug.WriteLine("RunAllAsync"); //TODO DEBUG
+
+            // cancellation
+            _cancellationSource = new CancellationTokenSource();
+            _cancellation = _cancellationSource.Token;
+
+            // progress
+            if (_progress != null)
+                for (var i = 0; i < Tasks.Count; i++)
+                {
+                    var taskIndex = i;
+                    Tasks[i].ProgressChanged +=
+                        (sender, args) => _progress.Report(sender, new ManagerProgressChangedEventArgs(taskIndex, args));
+                }
+
+            Task.Factory.StartNew(() => Busy = true)
+                .ContinueWith(_ =>
+                    {
+                        foreach (var replacerTask in Tasks)
+                        {
+                            Debug.WriteLine("rTask"); //TODO DEBUG
+                            replacerTask.Run(_cancellation);
+                        }
+                    }, _cancellation
+                )
+                .ContinueWith(_ => Busy = false)
+                .ContinueWith(_ =>
+                    {
+                        if (_progress != null) _progress.Report(null);
+                    });
+            Debug.WriteLine("endRunAll"); //TODO DEBUG
         }
 
-        public void RunAll()
+        public void StopAsync()
         {
-            var i = 0; 
-            Tasks.ForEach(task => task.ProgressChanged += (sender, args) => Task.Factory.StartNew(
-                () => OnProgressChanged(new ManagerProgressChangedEventArgs(i++, args)),CancellationToken.None,TaskCreationOptions.None, _uiThread));
-
-            var workTask = Task.Factory.StartNew(() => { }, TaskCreationOptions.PreferFairness);
-            foreach (var replacerTask in Tasks)
-            {
-                var rTask = replacerTask;
-                workTask.ContinueWith(_ => rTask.Run());
-            }
+            Debug.WriteLine("StopAsync"); //TODO DEBUG
+            _cancellationSource.Cancel(true);
         }
 
-        public void Stop()
+        public void CancelAsync()
         {
-            
-        }
-
-        public void Cancel()
-        {
-            
+            Debug.WriteLine("CancelAsync"); //TODO DEBUG
+            _cancellationSource.Cancel(false);
         }
     }
 }

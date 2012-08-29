@@ -42,7 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ReplaceFlags.cs" />
+    <Compile Include="Tasks\IProgress.cs" />
     <Compile Include="Tasks\ManagerProgressChangedEventArgs.cs" />
+    <Compile Include="Tasks\Progress.cs" />
     <Compile Include="Tasks\ReplacerMicroTask.cs" />
     <Compile Include="Tasks\MicroTaskStates.cs" />
     <Compile Include="Tasks\ReplacerTask.cs" />

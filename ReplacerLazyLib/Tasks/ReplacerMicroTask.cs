@@ -7,11 +7,11 @@ using Dem0n13.Replacer.Library.Utils;
 
 namespace Dem0n13.Replacer.Library.Tasks
 {
-    internal class ReplacerMicroTask
+    public class ReplacerMicroTask
     {
         #region Perfomance
-        public static readonly Dictionary<MicroTaskStates, long> PerfomanceVector =
-            Enum.GetValues(typeof(MicroTaskStates)).Cast<MicroTaskStates>().ToDictionary(o => o, o => 0L);
+        /*public static readonly Dictionary<MicroTaskStates, long> PerfomanceVector =
+            Enum.GetValues(typeof(MicroTaskStates)).Cast<MicroTaskStates>().ToDictionary(o => o, o => 0L);*/
         #endregion
 
         public static readonly MicroTaskStates[] StatesArray =
@@ -19,9 +19,10 @@ namespace Dem0n13.Replacer.Library.Tasks
         private readonly TextFile _file;
         private readonly RegexProcessor _regex;
         private readonly Replacement _replacement;
-        private readonly int _id;
         private static int _counter;
+        private readonly object _busy = new object();
 
+        public int ReplaceCount { get; private set; }
         private double _searchedTextPercentage;
         public MicroTaskStates State { get; private set; }
         public double Percentage
@@ -56,65 +57,85 @@ namespace Dem0n13.Replacer.Library.Tasks
             _file = textFile;
             _regex = regexProcessor;
             _replacement = replacement;
-            _id = Interlocked.Increment(ref _counter);
-            Debug.WriteLine("new MicroTask_" + _id);
+            Interlocked.Increment(ref _counter);
         }
 
-        public void Run()
+        public void Run(CancellationToken cancellationToken)
         {
-            if (Immutable) return;
-
-            var sw = Stopwatch.StartNew();
-
-            State = MicroTaskStates.Reading; //Debug.WriteLine("MicroTask_" + _id + ": " + State);
-            var text = _file.ReadText();
-            var replacer = new TextReplacer(text);
-
-            lock (PerfomanceVector) PerfomanceVector[State] += sw.ElapsedTicks;
-            sw.Restart();
-
-            State = MicroTaskStates.Searching; //Debug.WriteLine("MicroTask_" + _id + ": " + State);
-            var matches = new List<RelatedMatch>();
-            var m = _regex.RelatedMatch(text, 0, replacer);
-            while (m.Success)
+            lock (_busy)
             {
-                _searchedTextPercentage = (double) (m.StartIndex + m.Length)/text.Length;
-                //Console.WriteLine(_searchedTextPercentage);
-                matches.Add(m);
-                m = _regex.RelatedMatch(text, m.StartIndex + m.Length, replacer);
-            }
-            if (matches.Count == 0) matches.Add(m);
+                if (cancellationToken.IsCancellationRequested) return;
 
-            if (!matches[0].Success)
-            {
-                Immutable = true;
+                if (Immutable) return;
+
+                //var sw = Stopwatch.StartNew();
+
+                State = MicroTaskStates.Reading; //Debug.WriteLine("MicroTask_" + _id + ": " + State);
+                var text = _file.ReadText();
+                var replacer = new TextReplacer(text);
+
+                //lock (PerfomanceVector) PerfomanceVector[State] += sw.ElapsedTicks;
+                //sw.Restart();
+
+                if (cancellationToken.IsCancellationRequested) return;
+                State = MicroTaskStates.Searching; //Debug.WriteLine("MicroTask_" + _id + ": " + State);
+                var matches = new List<RelatedMatch>();
+                var m = _regex.RelatedMatch(text, 0, replacer);
+                while (m.Success)
+                {
+                    _searchedTextPercentage = (double)(m.StartIndex + m.Length) / text.Length;
+                    //Console.WriteLine(_searchedTextPercentage);
+                    matches.Add(m);
+                    if (cancellationToken.IsCancellationRequested) return;
+                    m = _regex.RelatedMatch(text, m.StartIndex + m.Length, replacer);
+                }
+                if (matches.Count == 0) matches.Add(m);
+
+                if (!matches[0].Success)
+                {
+                    Immutable = true;
+                    State = MicroTaskStates.Complete; //Debug.WriteLine("MicroTask_" + _id + ": " + State);
+                    return;
+                }
+
+                //lock (PerfomanceVector) PerfomanceVector[State] += sw.ElapsedTicks;
+                //sw.Restart();
+
+                if (cancellationToken.IsCancellationRequested) return;
+                State = MicroTaskStates.Replacing; //Debug.WriteLine("MicroTask_" + _id + ": " + State);
+                foreach (var relatedMatch in matches)
+                    replacer.Replace(relatedMatch, _replacement.CreateCopyWithGroups(relatedMatch));
+
+                // lock (PerfomanceVector) PerfomanceVector[State] += sw.ElapsedTicks;
+                //sw.Restart();
+
+                //if (cancellationToken.IsCancellationRequested) return;
+                State = MicroTaskStates.BuildingResult; //Debug.WriteLine("MicroTask_" + _id + ": " + State);
+                var result = replacer.BuildResult();
+                ReplaceCount += matches.Count;
+
+                //lock (PerfomanceVector) PerfomanceVector[State] += sw.ElapsedTicks;
+                //sw.Restart();
+
+                if (cancellationToken.IsCancellationRequested) return;
+                State = MicroTaskStates.SavingResult; //Debug.WriteLine("MicroTask_" + _id + ": " + State);
+                //TODO _file.WriteText(result);
+
+                //lock (PerfomanceVector) PerfomanceVector[State] += sw.ElapsedTicks;
+                //sw.Stop();
+
                 State = MicroTaskStates.Complete; //Debug.WriteLine("MicroTask_" + _id + ": " + State);
-                return;
             }
+        }
 
-            lock (PerfomanceVector) PerfomanceVector[State] += sw.ElapsedTicks;
-            sw.Restart();
-
-            State = MicroTaskStates.Replacing; //Debug.WriteLine("MicroTask_" + _id + ": " + State);
-            foreach (var relatedMatch in matches)
-                replacer.Replace(relatedMatch, _replacement.CreateCopyWithGroups(relatedMatch));
-
-            lock (PerfomanceVector) PerfomanceVector[State] += sw.ElapsedTicks;
-            sw.Restart();
-
-            State = MicroTaskStates.BuildingResult; //Debug.WriteLine("MicroTask_" + _id + ": " + State);
-            var result = replacer.BuildResult();
-
-            lock (PerfomanceVector) PerfomanceVector[State] += sw.ElapsedTicks;
-            sw.Restart();
-
-            State = MicroTaskStates.SavingResult; //Debug.WriteLine("MicroTask_" + _id + ": " + State);
-            //TODO _file.WriteText(result);
-
-            lock (PerfomanceVector) PerfomanceVector[State] += sw.ElapsedTicks;
-            sw.Stop();
-
-            State = MicroTaskStates.Complete; //Debug.WriteLine("MicroTask_" + _id + ": " + State);
+        public void Cancel()
+        {
+            lock (_busy)
+            {
+                if (State == MicroTaskStates.Complete)
+                    _file.RestoreBackup();
+                State = MicroTaskStates.None;
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -21,6 +22,9 @@ namespace Dem0n13.Replacer.App
     public partial class MainForm : Form
     {
         private LocalizationManager _localizationManager;
+        private ReplacerTaskManager _replacerTaskManager;
+        private Progress _progress;
+        private List<string> _logBoxSource = new List<string>(); 
 
         public MainForm()
         {
@@ -28,22 +32,32 @@ namespace Dem0n13.Replacer.App
             InitializeLocalization();
             var asmName = Assembly.GetExecutingAssembly().GetName();
             Text = string.Format("{0} v.{1}", asmName.Name, asmName.Version);
-            SwitchStage(ReplacerStages.FilesSelection);
-            //var context = TaskScheduler.FromCurrentSynchronizationContext();
-            _replacerTaskManager = new ReplacerTaskManager(TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private void InitializeLocalization()
         {
             _localizationManager = new LocalizationManager("Language");
-            _localizationManager.ApplyResource(FileSelectionCaption, "Text", "FileSelectionCaption");
-            _localizationManager.ApplyResource(ChooseFilesBtn, "Text", "SelectFiles");
-            _localizationManager.ApplyResource(OpenFileListBtn, "Text", "OpenFileList");
-            _localizationManager.ApplyResource(FileListCaption, "Text", "FileListCaption");
-            _localizationManager.ApplyResource(FileListBox, "Text", "EmptyFileList");
-            _localizationManager.ApplyResource(ClearFileListBtn, "Text", "ClearFileList");
-            _localizationManager.ApplyResource(SaveFileListBtn, "Text", "SaveFileList");
-            _localizationManager.ApplyResource(RegexStageBtn, "Text", "Next");
+            _localizationManager.ApplyResource(lblFileSelection, "Text", "FileSelectionCaption");
+            _localizationManager.ApplyResource(btnChooseFiles, "Text", "SelectFiles");
+            _localizationManager.ApplyResource(btnOpenFileList, "Text", "OpenFileList");
+            _localizationManager.ApplyResource(lblFileList, "Text", "FileListCaption");
+            _localizationManager.ApplyResource(boxFileList, "Text", "EmptyFileList");
+            _localizationManager.ApplyResource(btnClearFileList, "Text", "ClearFileList");
+            _localizationManager.ApplyResource(btnSaveFileList, "Text", "SaveFileList");
+            _localizationManager.ApplyResource(btnRegexStageNext, "Text", "RegexStageNext");
+
+            _localizationManager.ApplyResource(btnFileSelectionStagePrev, "Text", "FileSelectionStagePrev");
+
+            _localizationManager.ApplyResource(btnRegexStagePrev, "Text", "RegexStagePrev");
+            _localizationManager.ApplyResource(btnCancel, "Text", "Cancel");
+        }
+
+        private void MainFormLoad(object sender, EventArgs e)
+        {
+            SwitchStage(ReplacerStages.FilesSelection);
+            _progress = new Progress();
+            _progress.ProgressChanged += ProgressOnProgressChanged;
+            _replacerTaskManager = new ReplacerTaskManager(_progress);
         }
 
         #region Navigation
@@ -61,6 +75,10 @@ namespace Dem0n13.Replacer.App
                     break;
                 case ReplacerStages.Preview:
                     visibleLayout = PreviewStageLayout;
+                    _localizationManager.ApplyResource(btnCancel, "Text", "Cancel");
+                    btnCancel.Enabled = true;
+                    _localizationManager.ApplyResource(btnRegexStagePrev, "Text", "RegexStagePrev");
+                    btnRegexStagePrev.Enabled = false;
                     break;
                 case ReplacerStages.Replacing:
                     //break;
@@ -92,19 +110,19 @@ namespace Dem0n13.Replacer.App
             {
                 if (fileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    if (_localizationManager.HasResource(FileListBox, "Text"))
+                    if (_localizationManager.HasResource(boxFileList, "Text"))
                     {
-                        _localizationManager.CleanResource(FileListBox, "Text");
-                        FileListBox.Clear();
+                        _localizationManager.CleanResource(boxFileList, "Text");
+                        boxFileList.Clear();
 
-                        _localizationManager.ApplyResource(ChooseFilesBtn, "Text", "AddFiles");
+                        _localizationManager.ApplyResource(btnChooseFiles, "Text", "AddFiles");
                     }
 
                     foreach (var fileName in fileDialog.FileNames)
                     {
                         var textFile = new TextFile(fileName);
                         _inputFiles.Add(textFile);
-                        FileListBox.AppendText(textFile + Environment.NewLine);
+                        boxFileList.AppendText(textFile + Environment.NewLine);
                     }
                 }
             }
@@ -119,8 +137,8 @@ namespace Dem0n13.Replacer.App
         {
             _inputFiles.Clear();
             
-            _localizationManager.ApplyResource(ChooseFilesBtn, "Text", "SelectFiles");
-            _localizationManager.ApplyResource(FileListBox, "Text", "EmptyFileList");
+            _localizationManager.ApplyResource(btnChooseFiles, "Text", "SelectFiles");
+            _localizationManager.ApplyResource(boxFileList, "Text", "EmptyFileList");
         }
 
         private void SaveFilelistBtnClick(object sender, EventArgs e)
@@ -149,9 +167,6 @@ namespace Dem0n13.Replacer.App
             SwitchStage(ReplacerStages.FilesSelection);
         }
 
-
-        private ReplacerTaskManager _replacerTaskManager;
-
         private void PreviewStageBtnClick(object sender, EventArgs e)
         {
             if (RegExpBox.Text.Length == 0)
@@ -163,23 +178,73 @@ namespace Dem0n13.Replacer.App
             }
             
             SwitchStage(ReplacerStages.Preview);
-            _replacerTaskManager.ProgressChanged += ReplacerTaskManagerOnProgressChanged;
 
             _replacerTaskManager.Tasks.Clear();
             _replacerTaskManager.Tasks.Add(new ReplacerTask(_inputFiles, RegExpBox.Text, ReplacementBox.Text));
-            _replacerTaskManager.RunAll();
+            _replacerTaskManager.RunAllAsync();
         }
 
-        private void ReplacerTaskManagerOnProgressChanged(object sender, ManagerProgressChangedEventArgs args)
+        private void ProgressOnProgressChanged(object sender, ManagerProgressChangedEventArgs args)
         {
-            LogBox.AppendText(string.Format("{0}: {1}", args.CurrentItem, args.ProgressPercentage));
+            if (sender == _progress)
+            {
+                if (!_replacerTaskManager.Busy)
+                {
+                    btnRegexStagePrev.Enabled = true;
+                    _localizationManager.ApplyResource(btnCancel, "Text", "Ready");
+                    _logBoxSource.Add(_localizationManager.GetString("Ready"));
+                }
+            }
+            else
+            {
+                var vector = args.UserState as Dictionary<MicroTaskStates, int>;
+                if (vector != null)
+                {
+                    var logOffset = 8*args.TaskIndex;
+                    barTask.Value = args.ProgressPercentage;
+                    lblTaskBar.Text = string.Format(" Task {1}/{2}: {0}%", barTask.Value, args.TaskIndex + 1,
+                                                    _replacerTaskManager.Tasks.Count);
+                    barSummary.Value = args.ProgressPercentage/_replacerTaskManager.Tasks.Count;
+                    lblSummaryBar.Text = string.Format("Total: {0}%", barSummary.Value);
+                    if (LogBox.Lines.Length < logOffset+1)
+                    {
+                        _logBoxSource.AddRange(new[] { "", "", "", "", "", "", "", "" });
+                    }
+                    _logBoxSource[logOffset] = "Task " + (args.TaskIndex + 1);
+                    for (var i = 1; i < ReplacerMicroTask.StatesArray.Length; i++)
+                    {
+                        _logBoxSource[i + logOffset] = string.Format("{0}: {1}/{2}",
+                                                                     ReplacerMicroTask.StatesArray[i],
+                                                                     vector[ReplacerMicroTask.StatesArray[i]],
+                                                                     vector[MicroTaskStates.None]);
+                    }
+                }
+            }
+            LogBox.Lines = _logBoxSource.ToArray();
         }
 
         #endregion
 
-        private void CancelBtnClick(object sender, EventArgs e)
+        private void BtnPrevRegexStageClick(object sender, EventArgs e)
         {
-            SwitchStage(ReplacerStages.RegexInput);
+            if (!_replacerTaskManager.Busy)
+                SwitchStage(ReplacerStages.RegexInput);
+        }
+
+        private void BtnCancelClick(object sender, EventArgs e)
+        {
+            if (_replacerTaskManager.Busy)
+            {
+                if (MessageBox.Show(_localizationManager.GetString("RestoreBackupQuestion"),
+                                    _localizationManager.GetString("RestoreBackupQuestionCaption"),
+                                    MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                                    MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+                    _replacerTaskManager.CancelAsync();
+                else
+                    _replacerTaskManager.StopAsync();
+                _localizationManager.ApplyResource(btnCancel, "Text", "Cancellation");
+                btnCancel.Enabled = false;
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ namespace Dem0n13.Replacer.Library.Utils
         private readonly string _filePath;
         private readonly string _fileName;
         private readonly string _fileExtension;
+        private string _backupFileName;
 
         public string NewLine { get; set; }
 
@@ -80,9 +81,24 @@ namespace Dem0n13.Replacer.Library.Utils
         public void WriteText(string text)
         {
             // backup
-            File.Copy(FullPath, Path.Combine(_filePath, _fileName + DateTime.Now.Ticks + _fileExtension));
+            var backupFileName = _fileName + DateTime.Now.Ticks;
+            File.Copy(FullPath, Path.Combine(_filePath, backupFileName + _fileExtension));
+            _backupFileName = backupFileName;
 
             File.WriteAllText(FullPath, text);
+        }
+
+        public void RestoreBackup()
+        {
+            if (_backupFileName == null) return;
+
+            var backupFullPath = Path.Combine(_filePath, _backupFileName + _fileExtension);
+            if (!File.Exists(backupFullPath))
+                throw new Exception("Backup is not found");
+
+            File.Replace(backupFullPath, FullPath, null, true);
+            File.Delete(backupFullPath);
+            _backupFileName = null;
         }
 
         public override string ToString()
