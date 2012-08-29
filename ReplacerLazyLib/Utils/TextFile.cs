@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace Dem0n13.Replacer.Library.Utils
@@ -90,6 +91,7 @@ namespace Dem0n13.Replacer.Library.Utils
 
         public void RestoreBackup()
         {
+            Debug.WriteLine("RestoreBackup()");
             if (_backupFileName == null) return;
 
             var backupFullPath = Path.Combine(_filePath, _backupFileName + _fileExtension);

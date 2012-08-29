@@ -45,10 +45,13 @@
     <Compile Include="ReplaceFlags.cs" />
     <Compile Include="Tasks\IProgress.cs" />
     <Compile Include="Tasks\ManagerProgressChangedEventArgs.cs" />
+    <Compile Include="Tasks\MicroTask.cs" />
+    <Compile Include="Tasks\MicroTaskStatesHelper.cs" />
+    <Compile Include="Tasks\MicroTaskStatistics.cs" />
     <Compile Include="Tasks\Progress.cs" />
     <Compile Include="Tasks\ReplacerMicroTask.cs" />
     <Compile Include="Tasks\MicroTaskStates.cs" />
-    <Compile Include="Tasks\ReplacerTask.cs" />
+    <Compile Include="Tasks\Task.cs" />
     <Compile Include="Tasks\ReplacerTaskManager.cs" />
     <Compile Include="Utils\Boxed.cs" />
     <Compile Include="Utils\TextLengthChanger.cs" />

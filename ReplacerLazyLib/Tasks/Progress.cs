@@ -24,7 +24,7 @@ namespace Dem0n13.Replacer.Library.Tasks
         public void Report(object sender, ManagerProgressChangedEventArgs args)
         {
             Debug.WriteLine("Report"); //TODO DEBUG
-            Task.Factory.StartNew(() =>
+            System.Threading.Tasks.Task.Factory.StartNew(() =>
             {
                 var handler = ProgressChanged;
                 if (handler != null)

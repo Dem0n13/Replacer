@@ -16,6 +16,7 @@ using Dem0n13.Replacer.Library.Utils;
 using System.ComponentModel;
 using System.Resources;
 using LocalizationLibrary;
+using Task = Dem0n13.Replacer.Library.Tasks.Task;
 
 namespace Dem0n13.Replacer.App
 {
@@ -54,7 +55,7 @@ namespace Dem0n13.Replacer.App
 
         private void MainFormLoad(object sender, EventArgs e)
         {
-            SwitchStage(ReplacerStages.FilesSelection);
+            SwitchUIStage(ReplacerStages.FilesSelection);
             _progress = new Progress();
             _progress.ProgressChanged += ProgressOnProgressChanged;
             _replacerTaskManager = new ReplacerTaskManager(_progress);
@@ -62,7 +63,7 @@ namespace Dem0n13.Replacer.App
 
         #region Navigation
 
-        private void SwitchStage(ReplacerStages stage)
+        private void SwitchUIStage(ReplacerStages stage)
         {
             Control visibleLayout = null;
             switch (stage)
@@ -155,7 +156,7 @@ namespace Dem0n13.Replacer.App
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            SwitchStage(ReplacerStages.RegexInput);
+            SwitchUIStage(ReplacerStages.RegexInput);
         }
 
         #endregion
@@ -164,7 +165,7 @@ namespace Dem0n13.Replacer.App
 
         private void FileSelectionStageBtnClick(object sender, EventArgs e)
         {
-            SwitchStage(ReplacerStages.FilesSelection);
+            SwitchUIStage(ReplacerStages.FilesSelection);
         }
 
         private void PreviewStageBtnClick(object sender, EventArgs e)
@@ -177,45 +178,42 @@ namespace Dem0n13.Replacer.App
                 return;
             }
             
-            SwitchStage(ReplacerStages.Preview);
+            SwitchUIStage(ReplacerStages.Preview);
 
             _replacerTaskManager.Tasks.Clear();
-            _replacerTaskManager.Tasks.Add(new ReplacerTask(_inputFiles, RegExpBox.Text, ReplacementBox.Text));
+            _replacerTaskManager.Tasks.Add(new Task(_inputFiles, RegExpBox.Text, ReplacementBox.Text));
             _replacerTaskManager.RunAllAsync();
         }
 
         private void ProgressOnProgressChanged(object sender, ManagerProgressChangedEventArgs args)
         {
-            if (sender == _progress)
+            if (!_replacerTaskManager.Busy)
             {
-                if (!_replacerTaskManager.Busy)
-                {
-                    btnRegexStagePrev.Enabled = true;
-                    _localizationManager.ApplyResource(btnCancel, "Text", "Ready");
-                    _logBoxSource.Add(_localizationManager.GetString("Ready"));
-                }
+                btnRegexStagePrev.Enabled = true;
+                _localizationManager.ApplyResource(btnCancel, "Text", "Ready");
+                _logBoxSource.Add(_localizationManager.GetString("Ready"));
             }
             else
             {
                 var vector = args.UserState as Dictionary<MicroTaskStates, int>;
                 if (vector != null)
                 {
-                    var logOffset = 8*args.TaskIndex;
+                    var logOffset = 8 * args.TaskIndex;
                     barTask.Value = args.ProgressPercentage;
                     lblTaskBar.Text = string.Format(" Task {1}/{2}: {0}%", barTask.Value, args.TaskIndex + 1,
                                                     _replacerTaskManager.Tasks.Count);
-                    barSummary.Value = args.ProgressPercentage/_replacerTaskManager.Tasks.Count;
+                    barSummary.Value = args.ProgressPercentage / _replacerTaskManager.Tasks.Count;
                     lblSummaryBar.Text = string.Format("Total: {0}%", barSummary.Value);
-                    if (LogBox.Lines.Length < logOffset+1)
+                    if (LogBox.Lines.Length < logOffset + 1)
                     {
                         _logBoxSource.AddRange(new[] { "", "", "", "", "", "", "", "" });
                     }
                     _logBoxSource[logOffset] = "Task " + (args.TaskIndex + 1);
-                    for (var i = 1; i < ReplacerMicroTask.StatesArray.Length; i++)
+                    for (var i = 1; i < MicroTaskStatesHelper.StatesArray.Length; i++)
                     {
                         _logBoxSource[i + logOffset] = string.Format("{0}: {1}/{2}",
-                                                                     ReplacerMicroTask.StatesArray[i],
-                                                                     vector[ReplacerMicroTask.StatesArray[i]],
+                                                                     MicroTaskStatesHelper.StatesArray[i],
+                                                                     vector[MicroTaskStatesHelper.StatesArray[i]],
                                                                      vector[MicroTaskStates.None]);
                     }
                 }
@@ -228,7 +226,7 @@ namespace Dem0n13.Replacer.App
         private void BtnPrevRegexStageClick(object sender, EventArgs e)
         {
             if (!_replacerTaskManager.Busy)
-                SwitchStage(ReplacerStages.RegexInput);
+                SwitchUIStage(ReplacerStages.RegexInput);
         }
 
         private void BtnCancelClick(object sender, EventArgs e)
