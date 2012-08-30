@@ -32,24 +32,26 @@ namespace Dem0n13.Replacer.Library.Tasks
 
         public ProgressChangedEventArgs GetStatistics()
         {
+            // обновляем статистику для каждого файла
             for (var i = 0; i < _microTasks.Length; i++)
-            {
                 if (_microTasks[i].Updated)
-                {
                     _statisticsVector[i] = _microTasks[i].GetStatistics();
-                }
-            }
 
-            var sPercentage = _statisticsVector.Average(statistics => statistics.Percentage);
-            foreach (var state in Enum.GetValues(typeof (MicroTaskStates)).Cast<MicroTaskStates>())
+            // обнуляем предыдущий вектор статистики
+            foreach (var state in MicroTaskStatesHelper.StatesArray) _stateVector[state] = 0;
+
+            // считаем общий процент и заполняем вектор
+            var sPercentage = 0.0;
+            foreach (var microTaskStat in _statisticsVector)
             {
-                _stateVector[state] = 0; // reset old vector
-                foreach (var microTask in _statisticsVector)
-                    if (microTask.State.HasFlag(state))
-                        _stateVector[state]++; // fill new values
+                sPercentage += microTaskStat.Percentage;
+                foreach (var state in MicroTaskStatesHelper.StatesArray) 
+                    if (microTaskStat.State.HasFlag(state))
+                        _stateVector[state]++;
+                    else break;
             }
-            
-            Debug.WriteLine("{0}%, {1}", sPercentage, String.Join(",", _stateVector));
+            sPercentage /= _microTasks.Length;
+
             return new ProgressChangedEventArgs((int) Math.Round(sPercentage), _stateVector);
         }
 
@@ -89,8 +91,15 @@ namespace Dem0n13.Replacer.Library.Tasks
 
         public void Cancel()
         {
-            var options = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount };
-            Parallel.ForEach(_microTasks, options, task => task.Cancel());
+            var i = 0;
+            foreach (var microTask in _microTasks)
+            {
+                Debug.WriteLine(i + ": ");
+                microTask.Cancel();
+                i++;
+            }
+            /*var options = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount };
+            Parallel.ForEach(_microTasks, options, task => task.Cancel());*/
         }
     }
 }

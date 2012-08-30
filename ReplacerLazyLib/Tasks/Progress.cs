@@ -1,19 +1,16 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Threading;
 using System.Threading.Tasks;
-using System.ComponentModel;
 
 namespace Dem0n13.Replacer.Library.Tasks
 {
     public class Progress : IProgress
     {
         public event EventHandler<ManagerProgressChangedEventArgs> ProgressChanged;
-        public TaskScheduler Scheduler { get; private set; }
+        private readonly TaskFactory _uiFactory;
 
         public Progress()
         {
-            Scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+            _uiFactory = new TaskFactory(TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         public void Report(ManagerProgressChangedEventArgs args)
@@ -23,13 +20,12 @@ namespace Dem0n13.Replacer.Library.Tasks
 
         public void Report(object sender, ManagerProgressChangedEventArgs args)
         {
-            Debug.WriteLine("Report"); //TODO DEBUG
-            System.Threading.Tasks.Task.Factory.StartNew(() =>
+            _uiFactory.StartNew(() =>
             {
                 var handler = ProgressChanged;
                 if (handler != null)
                     handler(sender, args);
-            }, CancellationToken.None, TaskCreationOptions.None, Scheduler);
+            }).Wait();
         }
     }
 }

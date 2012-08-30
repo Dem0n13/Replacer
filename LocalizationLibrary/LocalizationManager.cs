@@ -209,7 +209,7 @@ namespace Dem0n13.LocalizationLibrary
                 return _languageStrings[key];
             if (_defaultStrings.ContainsKey(key))
                 return _defaultStrings[key];
-            Debug.WriteLine(string.Format("GetString [{0}] returns null", key));
+            Debug.WriteLine("GetString [{0}] returns null", (object)key);
             return null;
         }
     }

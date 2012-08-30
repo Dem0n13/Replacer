@@ -49,10 +49,9 @@
     <Compile Include="Tasks\MicroTaskStatesHelper.cs" />
     <Compile Include="Tasks\MicroTaskStatistics.cs" />
     <Compile Include="Tasks\Progress.cs" />
-    <Compile Include="Tasks\ReplacerMicroTask.cs" />
     <Compile Include="Tasks\MicroTaskStates.cs" />
     <Compile Include="Tasks\Task.cs" />
-    <Compile Include="Tasks\ReplacerTaskManager.cs" />
+    <Compile Include="Tasks\TaskManager.cs" />
     <Compile Include="Utils\Boxed.cs" />
     <Compile Include="Utils\TextLengthChanger.cs" />
     <Compile Include="Utils\Node.cs" />

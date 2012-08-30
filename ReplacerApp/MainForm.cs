@@ -23,7 +23,7 @@ namespace Dem0n13.Replacer.App
     public partial class MainForm : Form
     {
         private LocalizationManager _localizationManager;
-        private ReplacerTaskManager _replacerTaskManager;
+        private TaskManager _taskManager;
         private Progress _progress;
         private List<string> _logBoxSource = new List<string>(); 
 
@@ -58,7 +58,7 @@ namespace Dem0n13.Replacer.App
             SwitchUIStage(ReplacerStages.FilesSelection);
             _progress = new Progress();
             _progress.ProgressChanged += ProgressOnProgressChanged;
-            _replacerTaskManager = new ReplacerTaskManager(_progress);
+            _taskManager = new TaskManager(_progress);
         }
 
         #region Navigation
@@ -180,14 +180,14 @@ namespace Dem0n13.Replacer.App
             
             SwitchUIStage(ReplacerStages.Preview);
 
-            _replacerTaskManager.Tasks.Clear();
-            _replacerTaskManager.Tasks.Add(new Task(_inputFiles, RegExpBox.Text, ReplacementBox.Text));
-            _replacerTaskManager.RunAllAsync();
+            _taskManager.Tasks.Clear();
+            _taskManager.Tasks.Add(new Task(_inputFiles, RegExpBox.Text, ReplacementBox.Text));
+            _taskManager.RunAllAsync();
         }
 
         private void ProgressOnProgressChanged(object sender, ManagerProgressChangedEventArgs args)
         {
-            if (!_replacerTaskManager.Busy)
+            if (!_taskManager.Busy)
             {
                 btnRegexStagePrev.Enabled = true;
                 _localizationManager.ApplyResource(btnCancel, "Text", "Ready");
@@ -201,8 +201,8 @@ namespace Dem0n13.Replacer.App
                     var logOffset = 8 * args.TaskIndex;
                     barTask.Value = args.ProgressPercentage;
                     lblTaskBar.Text = string.Format(" Task {1}/{2}: {0}%", barTask.Value, args.TaskIndex + 1,
-                                                    _replacerTaskManager.Tasks.Count);
-                    barSummary.Value = args.ProgressPercentage / _replacerTaskManager.Tasks.Count;
+                                                    _taskManager.Tasks.Count);
+                    barSummary.Value = args.ProgressPercentage / _taskManager.Tasks.Count;
                     lblSummaryBar.Text = string.Format("Total: {0}%", barSummary.Value);
                     if (LogBox.Lines.Length < logOffset + 1)
                     {
@@ -225,21 +225,30 @@ namespace Dem0n13.Replacer.App
 
         private void BtnPrevRegexStageClick(object sender, EventArgs e)
         {
-            if (!_replacerTaskManager.Busy)
+            if (!_taskManager.Busy)
                 SwitchUIStage(ReplacerStages.RegexInput);
         }
 
         private void BtnCancelClick(object sender, EventArgs e)
         {
-            if (_replacerTaskManager.Busy)
+            if (_taskManager.Busy)
             {
                 if (MessageBox.Show(_localizationManager.GetString("RestoreBackupQuestion"),
                                     _localizationManager.GetString("RestoreBackupQuestionCaption"),
                                     MessageBoxButtons.YesNo, MessageBoxIcon.Question,
                                     MessageBoxDefaultButton.Button1) == DialogResult.Yes)
-                    _replacerTaskManager.CancelAsync();
+                    _taskManager.CancelAsync();
                 else
-                    _replacerTaskManager.StopAsync();
+                    _taskManager.StopAsync();
+                _localizationManager.ApplyResource(btnCancel, "Text", "Cancellation");
+                btnCancel.Enabled = false;
+            }
+            else if (MessageBox.Show(_localizationManager.GetString("CancelQuestion"),
+                                     _localizationManager.GetString("CancelQuestionCaption"),
+                                     MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                                     MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+            {
+                _taskManager.CancelAsync();
                 _localizationManager.ApplyResource(btnCancel, "Text", "Cancellation");
                 btnCancel.Enabled = false;
             }

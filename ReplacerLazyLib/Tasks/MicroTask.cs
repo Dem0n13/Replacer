@@ -130,6 +130,8 @@ namespace Dem0n13.Replacer.Library.Tasks
             {
                 if (Immutable) return;
 
+                //State = MicroTaskStates.None;
+
                 if (cancellationToken.IsCancellationRequested) return;
                 State = MicroTaskStates.Reading;
                 var text = _file.ReadText();
@@ -148,8 +150,6 @@ namespace Dem0n13.Replacer.Library.Tasks
                 }
                 if (matches.Count == 0) matches.Add(m);
 
-                if (cancellationToken.IsCancellationRequested) return;
-
                 if (!matches[0].Success)
                 {
                     Immutable = true;
@@ -157,6 +157,7 @@ namespace Dem0n13.Replacer.Library.Tasks
                     return;
                 }
 
+                if (cancellationToken.IsCancellationRequested) return;
                 State = MicroTaskStates.Replacing;
                 foreach (var relatedMatch in matches)
                     replacer.Replace(relatedMatch, _replacement.CreateCopyWithGroups(relatedMatch));
@@ -167,7 +168,7 @@ namespace Dem0n13.Replacer.Library.Tasks
 
                 if (cancellationToken.IsCancellationRequested) return;
                 State = MicroTaskStates.SavingResult;
-                //TODO _file.WriteText(result);
+                _file.WriteText(result);
 
                 State = MicroTaskStates.Complete;
             }
@@ -175,13 +176,15 @@ namespace Dem0n13.Replacer.Library.Tasks
 
         public void Cancel()
         {
+            Debug.WriteLine("mCancel()" + State);
             lock (_busy)
             {
-                Debug.WriteLine("mCancel()");
+                Debug.WriteLine("afterlock()" + State);
                 if (State == MicroTaskStates.Complete)
                     _file.RestoreBackup();
                 State = MicroTaskStates.None;
             }
+            Debug.WriteLine("------" + State);
         } 
     }
 }
