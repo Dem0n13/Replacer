@@ -10,19 +10,24 @@ namespace Dem0n13.Replacer.Library.Tasks
     public sealed class TaskManager
     {
         public List<Task> Tasks = new List<Task>();
-        private Timer _refresher;
-        private readonly IProgress _progress;
+
+        private readonly IProgress<ManagerProgressChangedEventArgs> _progress;
         private CancellationToken _cancellation;
         private CancellationTokenSource _cancellationSource;
+        //
+        private readonly ActionRepeater _actionRepeater;
+        // TODO old
+        private Timer _refresher;
         private const int DefaultRefresherPeriod = 250;
         private const int MaxRefresherPeriod = 2000;
         private int _refresherPeriod = DefaultRefresherPeriod;
+        //
         private int _currentTaskIndex;
-        private TaskFactory _taskFactory = new TaskFactory();
+        private readonly TaskFactory _taskFactory = new TaskFactory();
 
         public bool Busy { get; private set; }
 
-        private int RefresherPeriod
+        private int RefresherPeriod // TODO old
         {
             get { return _refresherPeriod; }
             set
@@ -34,9 +39,10 @@ namespace Dem0n13.Replacer.Library.Tasks
             }
         }
 
-        public TaskManager(IProgress progress)
+        public TaskManager(IProgress<ManagerProgressChangedEventArgs> progress)
         {
             _progress = progress ?? new Progress();
+            _actionRepeater = new ActionRepeater(RefreshStatistics);
         }
 
         private void RefreshStatisticsForced()
@@ -50,19 +56,22 @@ namespace Dem0n13.Replacer.Library.Tasks
             if (Tasks[_currentTaskIndex].Updated)
             {
                 RefreshStatisticsForced();
-                RefresherPeriod /= 2;
+                RefresherPeriod /= 2; // TODO old
+                _actionRepeater.TimeDecrement();
             }
             else
             {
-                RefresherPeriod *= 2;
+                RefresherPeriod *= 2; // TODO old
+                _actionRepeater.TimeIncrement();
             }
         }
 
         private void Complete()
         {          
-            RefreshStatisticsForced();
+            //RefreshStatisticsForced();
             Busy = false;
-            RefreshStatisticsForced();
+            //RefreshStatisticsForced();
+            _actionRepeater.Stop(true);
         }
 
         public void RunAllAsync()
@@ -74,8 +83,9 @@ namespace Dem0n13.Replacer.Library.Tasks
             Busy = true;
 
             // progress
-            _refresher = new Timer(state => RefreshStatistics(), null, 0, DefaultRefresherPeriod);
-
+            //_refresher = new Timer(state => RefreshStatistics(), null, 0, DefaultRefresherPeriod);// TODO old
+            _actionRepeater.Start(true);
+            
             _taskFactory.StartNew(() =>
                 {
                     for (var i = 0; i < Tasks.Count; i++)
@@ -83,13 +93,14 @@ namespace Dem0n13.Replacer.Library.Tasks
                         _currentTaskIndex = i;
                         Debug.WriteLine("rTask" + _currentTaskIndex); //TODO DEBUG
                         Tasks[_currentTaskIndex].Run(_cancellation);
-                        RefreshStatistics();
+                        RefreshStatisticsForced();
                     }
                 })
                 .ContinueWith(_ =>
                     {
-                        _refresher.Dispose();
-                        _refresher = null;
+                        //_refresher.Dispose();// TODO old
+                        //_refresher = null;// TODO old
+                        //_actionRepeater.Stop(true);
                         if (!_cancellation.IsCancellationRequested) Complete();
                     });
         }
@@ -105,10 +116,15 @@ namespace Dem0n13.Replacer.Library.Tasks
             Busy = true;
             Debug.WriteLine("CancelAsync"); //TODO DEBUG
             _cancellationSource.Cancel();
+            _actionRepeater.Start(true);
             _taskFactory.StartNew(() =>
                 {
-                    Tasks.ForEach(task => task.Cancel());
-                    RefreshStatisticsForced();
+                    for (var i = 0; i < Tasks.Count; i++)
+                    {
+                        _currentTaskIndex = i;
+                        Tasks[_currentTaskIndex].Cancel();
+                        RefreshStatisticsForced();
+                    }
                 })
                 .ContinueWith(_ => Complete());
         }

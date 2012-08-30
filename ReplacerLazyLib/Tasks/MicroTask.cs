@@ -130,7 +130,7 @@ namespace Dem0n13.Replacer.Library.Tasks
             {
                 if (Immutable) return;
 
-                //State = MicroTaskStates.None;
+                Debug.Assert(_state == MicroTaskStates.None);
 
                 if (cancellationToken.IsCancellationRequested) return;
                 State = MicroTaskStates.Reading;

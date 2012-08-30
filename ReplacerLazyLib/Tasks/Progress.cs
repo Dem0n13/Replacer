@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Dem0n13.Replacer.Library.Tasks
 {
-    public class Progress : IProgress
+    public class Progress : IProgress<ManagerProgressChangedEventArgs>
     {
         public event EventHandler<ManagerProgressChangedEventArgs> ProgressChanged;
         private readonly TaskFactory _uiFactory;
