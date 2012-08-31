@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using NLog;
 using System.Linq;
 using System.Threading;
 using Dem0n13.Replacer.Library.Utils;
@@ -9,6 +9,7 @@ namespace Dem0n13.Replacer.Library.Tasks
 {
     internal class MicroTask
     {
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly TextFile _file;
         private readonly RegexProcessor _regex;
         private readonly Replacement _replacement;
@@ -20,7 +21,7 @@ namespace Dem0n13.Replacer.Library.Tasks
         private readonly object _syncStat = new object();
         private double _currentStagePercentage;
         private int _replacesCount;
-        private bool _updated;
+        private bool _updated = true;
         private MicroTaskStates _state;
         
         // внутренние акцессоры к статистике
@@ -130,7 +131,7 @@ namespace Dem0n13.Replacer.Library.Tasks
             {
                 if (Immutable) return;
 
-                Debug.Assert(_state == MicroTaskStates.None);
+                if (_state != MicroTaskStates.None) _log.Error("_state != MicroTaskStates.None");
 
                 if (cancellationToken.IsCancellationRequested) return;
                 State = MicroTaskStates.Reading;
@@ -176,15 +177,13 @@ namespace Dem0n13.Replacer.Library.Tasks
 
         public void Cancel()
         {
-            Debug.WriteLine("mCancel()" + State);
             lock (_busy)
             {
-                Debug.WriteLine("afterlock()" + State);
+                _log.Debug("afterlock, State=" + State);
                 if (State == MicroTaskStates.Complete)
                     _file.RestoreBackup();
                 State = MicroTaskStates.None;
             }
-            Debug.WriteLine("------" + State);
         } 
     }
 }

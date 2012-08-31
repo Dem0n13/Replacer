@@ -1,6 +1,6 @@
 ﻿namespace Dem0n13.Replacer.Library.Tasks
 {
-    public struct MicroTaskStatistics
+    internal struct MicroTaskStatistics
     {
         public double Percentage;
         public MicroTaskStates State;

@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Timers;
+using NLog;
 
 namespace Dem0n13.Replacer.Library.Tasks
 {
     internal class ActionRepeater
     {
+        public readonly Logger Log = LogManager.GetCurrentClassLogger();
         private readonly Timer _timer = new Timer(DefaultRefresherPeriod);
         private const double DefaultRefresherPeriod = 250.0;
-        private const double MaxRefresherPeriod = 10000.0;
+        private const double MaxRefresherPeriod = 4000.0;
         private readonly Action _action;
-        private readonly Stopwatch _sw = new Stopwatch();
 
         public ActionRepeater(Action action)
         {
@@ -20,7 +20,7 @@ namespace Dem0n13.Replacer.Library.Tasks
 
         public void Start(bool initialStart)
         {
-            _sw.Start();
+            Log.Debug("Start");
             _timer.Elapsed += OnTimerElapsed;
             if (initialStart) OnTimerElapsed(null, null);
             _timer.Start();
@@ -31,23 +31,22 @@ namespace Dem0n13.Replacer.Library.Tasks
             _timer.Elapsed -= OnTimerElapsed;
             _timer.Stop();
             if (lastStart) OnTimerElapsed(null, null);
-            _sw.Stop();
         }
 
         private void OnTimerElapsed(object sender, ElapsedEventArgs e)
         {
-            Debug.WriteLine("TimerEvent: " + _sw.Elapsed);
+            //Log.Debug("OnTimerElapsed");
             _action();
         }
 
-        public void TimeIncrement()
+        public void IncPeriod()
         {
             var newValue = _timer.Interval * 2.0;
             if (newValue > MaxRefresherPeriod) return;
             _timer.Interval = newValue;
         }
 
-        public void TimeDecrement()
+        public void DecPeriod()
         {
             var newValue = _timer.Interval / 2.0;
             if (newValue < DefaultRefresherPeriod) return;

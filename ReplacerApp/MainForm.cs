@@ -1,21 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using System.Reflection;
-using System.Security.Permissions;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Dem0n13.LocalizationLibrary;
-using Dem0n13.Replacer.App.Properties;
-using Dem0n13.Replacer.Library;
 using Dem0n13.Replacer.Library.Tasks;
 using Dem0n13.Replacer.Library.Utils;
-using System.ComponentModel;
-using System.Resources;
-using LocalizationLibrary;
 using Task = Dem0n13.Replacer.Library.Tasks.Task;
 
 namespace Dem0n13.Replacer.App
@@ -25,7 +14,7 @@ namespace Dem0n13.Replacer.App
         private LocalizationManager _localizationManager;
         private TaskManager _taskManager;
         private Progress _progress;
-        private List<string> _logBoxSource = new List<string>(); 
+        private List<string> _logBoxSource = new List<string>();
 
         public MainForm()
         {
@@ -58,6 +47,7 @@ namespace Dem0n13.Replacer.App
             SwitchUIStage(ReplacerStages.FilesSelection);
             _progress = new Progress();
             _progress.ProgressChanged += ProgressOnProgressChanged;
+            _progress.Completed += ProgressOnCompleted;
             _taskManager = new TaskManager(_progress);
         }
 
@@ -187,38 +177,39 @@ namespace Dem0n13.Replacer.App
 
         private void ProgressOnProgressChanged(object sender, ManagerProgressChangedEventArgs args)
         {
-            if (!_taskManager.Busy)
+            TaskManager.Log.Debug("ProgressOnProgressChanged Busy= " + _taskManager.Busy);
+
+            var vector = args.UserState as Dictionary<MicroTaskStates, int>;
+            if (vector != null)
             {
-                btnRegexStagePrev.Enabled = true;
-                _localizationManager.ApplyResource(btnCancel, "Text", "Ready");
-                _logBoxSource.Add(_localizationManager.GetString("Ready"));
-            }
-            else
-            {
-                var vector = args.UserState as Dictionary<MicroTaskStates, int>;
-                if (vector != null)
+                var logOffset = 8*args.TaskIndex;
+                barTask.Value = args.ProgressPercentage;
+                lblTaskBar.Text = string.Format(" Task {1}/{2}: {0}%", barTask.Value, args.TaskIndex + 1,
+                                                _taskManager.Tasks.Count);
+                barSummary.Value = args.ProgressPercentage/_taskManager.Tasks.Count;
+                lblSummaryBar.Text = string.Format("Total: {0}%", barSummary.Value);
+                if (LogBox.Lines.Length < logOffset + 1)
                 {
-                    var logOffset = 8 * args.TaskIndex;
-                    barTask.Value = args.ProgressPercentage;
-                    lblTaskBar.Text = string.Format(" Task {1}/{2}: {0}%", barTask.Value, args.TaskIndex + 1,
-                                                    _taskManager.Tasks.Count);
-                    barSummary.Value = args.ProgressPercentage / _taskManager.Tasks.Count;
-                    lblSummaryBar.Text = string.Format("Total: {0}%", barSummary.Value);
-                    if (LogBox.Lines.Length < logOffset + 1)
-                    {
-                        _logBoxSource.AddRange(new[] { "", "", "", "", "", "", "", "" });
-                    }
-                    _logBoxSource[logOffset] = "Task " + (args.TaskIndex + 1);
-                    for (var i = 1; i < MicroTaskStatesHelper.StatesArray.Length; i++)
-                    {
-                        _logBoxSource[i + logOffset] = string.Format("{0}: {1}/{2}",
-                                                                     MicroTaskStatesHelper.StatesArray[i],
-                                                                     vector[MicroTaskStatesHelper.StatesArray[i]],
-                                                                     vector[MicroTaskStates.None]);
-                    }
+                    _logBoxSource.AddRange(new[] {"", "", "", "", "", "", "", ""});
+                }
+                _logBoxSource[logOffset] = "Task " + (args.TaskIndex + 1);
+                for (var i = 1; i < MicroTaskStatesHelper.StatesArray.Length; i++)
+                {
+                    _logBoxSource[i + logOffset] = string.Format("{0}: {1}/{2}",
+                                                                 MicroTaskStatesHelper.StatesArray[i],
+                                                                 vector[MicroTaskStatesHelper.StatesArray[i]],
+                                                                 vector[MicroTaskStates.None]);
                 }
             }
             LogBox.Lines = _logBoxSource.ToArray();
+        }
+
+
+        private void ProgressOnCompleted(object sender, EventArgs eventArgs)
+        {
+            btnRegexStagePrev.Enabled = true;
+            _localizationManager.ApplyResource(btnCancel, "Text", "Ready");
+            _logBoxSource.Add(_localizationManager.GetString("Ready"));
         }
 
         #endregion

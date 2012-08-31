@@ -26,6 +26,7 @@ namespace Dem0n13.Replacer.Library.Tasks
         {
             get
             {
+                if (!_initialized) Debug.WriteLine("!_initialized");
                 return _initialized && _microTasks.Any(task => task.Updated);
             }
         }
@@ -83,10 +84,10 @@ namespace Dem0n13.Replacer.Library.Tasks
                                  });
                 _initialized = true;
             }
-
+            Debug.WriteLine("Time initialization: {0}", sw.Elapsed);
             Parallel.ForEach(_microTasks, options, task => task.Run(cancellationToken));
 
-            Debug.WriteLine("Time: {0}", sw.Elapsed);
+            Debug.WriteLine("Time All: {0}", sw.Elapsed);
         }
 
         public void Cancel()
@@ -94,12 +95,10 @@ namespace Dem0n13.Replacer.Library.Tasks
             var i = 0;
             foreach (var microTask in _microTasks)
             {
-                Debug.WriteLine(i + ": ");
+                Debug.WriteLine("Cancel " + i + ": ");
                 microTask.Cancel();
                 i++;
             }
-            /*var options = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount };
-            Parallel.ForEach(_microTasks, options, task => task.Cancel());*/
         }
     }
 }
