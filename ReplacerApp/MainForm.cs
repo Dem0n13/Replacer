@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Dem0n13.LocalizationLibrary;
 using Dem0n13.Replacer.Library.Tasks;
 using Dem0n13.Replacer.Library.Utils;
+using NLog;
 using Task = Dem0n13.Replacer.Library.Tasks.Task;
 
 namespace Dem0n13.Replacer.App
@@ -15,6 +16,7 @@ namespace Dem0n13.Replacer.App
         private TaskManager _taskManager;
         private Progress _progress;
         private List<string> _logBoxSource = new List<string>();
+        private Logger _log = LogManager.GetCurrentClassLogger();
 
         public MainForm()
         {
@@ -177,7 +179,7 @@ namespace Dem0n13.Replacer.App
 
         private void ProgressOnProgressChanged(object sender, ManagerProgressChangedEventArgs args)
         {
-            TaskManager.Log.Debug("ProgressOnProgressChanged Busy= " + _taskManager.Busy);
+            _log.Debug("ProgressOnProgressChanged Busy = " + _taskManager.Busy);
 
             var vector = args.UserState as Dictionary<MicroTaskStates, int>;
             if (vector != null)

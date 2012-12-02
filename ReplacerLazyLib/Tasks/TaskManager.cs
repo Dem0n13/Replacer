@@ -56,7 +56,6 @@ namespace Dem0n13.Replacer.Library.Tasks
             Busy = false;
             _statRefresher.Stop(true);
             _progress.Complete();
-            //RefreshStatisticsForced(); // TODO change to complete
         }
 
         public void RunAllAsync()
@@ -69,7 +68,7 @@ namespace Dem0n13.Replacer.Library.Tasks
             Log.Debug("Busy = true");
 
             // progress
-            _statRefresher.Start(true);
+            _statRefresher.Start(false);
 
             _taskFactory.StartNew(() =>
                 {
@@ -96,7 +95,7 @@ namespace Dem0n13.Replacer.Library.Tasks
             Log.Debug("CancelAsync(), Busy={0}", Busy);
             Busy = true;
             _cancellationSource.Cancel();
-            _statRefresher.Start(false);
+            _statRefresher.Start(true);
             _taskFactory.StartNew(() =>
                 {
                     for (var i = 0; i < Tasks.Count; i++)

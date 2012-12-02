@@ -73,7 +73,7 @@ namespace Dem0n13.Replacer.Library
                 }
                 else
                 {
-                    if (pattern[i].Equals('\\'))
+                    if (pattern[i].Equals('\\') || pattern[i].Equals('$'))
                         prevEscapeChar = true;
 
                     // любой символ - увеличиваем длину слова

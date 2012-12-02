@@ -92,13 +92,13 @@ namespace Dem0n13.Replacer.Library.Tasks
 
         public void Cancel()
         {
-            var i = 0;
-            foreach (var microTask in _microTasks)
-            {
-                Debug.WriteLine("Cancel " + i + ": ");
-                microTask.Cancel();
-                i++;
-            }
+            var options = new ParallelOptions {MaxDegreeOfParallelism = Environment.ProcessorCount};
+            Parallel.For(0, _microTasks.Length,
+                         options, i =>
+                             {
+                                 Debug.WriteLine("Cancel " + i + ": ");
+                                 _microTasks[i].Cancel();
+                             });
         }
     }
 }
